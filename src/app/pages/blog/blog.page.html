@@ -1,0 +1,54 @@
+<section class="section-tight section-blue" aria-labelledby="blog-title">
+  <div class="container">
+    <h1 id="blog-title" class="sr-only">
+      {{
+        i18n.t(
+          'Conseils pour créer et améliorer votre site web',
+          'Advice for creating and improving your website'
+        )
+      }}
+    </h1>
+    <div
+      class="blog-filters"
+      [attr.aria-label]="i18n.t('Filtrer les articles', 'Filter articles')"
+    >
+      @for (category of categories(); track category.key) {
+        <button
+          class="filter-button"
+          type="button"
+          [class.active]="activeCategory() === category.key"
+          [attr.aria-pressed]="activeCategory() === category.key"
+          (click)="activeCategory.set(category.key)"
+        >
+          {{ category.label }}
+        </button>
+      }
+    </div>
+    <div class="blog-grid">
+      @for (article of filteredArticles(); track article.slug) {
+        <article>
+          <a class="blog-card" [routerLink]="['/blog', article.slug]">
+            <span class="tag">{{ article.categoryLabel }}</span>
+            <h2>{{ article.title }}</h2>
+            <p>{{ article.description }}</p>
+            <div class="blog-card-meta">
+              <time [attr.datetime]="article.date">{{ article.displayDate }}</time>
+              <span>{{ article.readingLabel }}</span>
+            </div>
+          </a>
+        </article>
+      } @empty {
+        <p>
+          {{
+            i18n.t(
+              'Aucun article dans cette catégorie pour le moment.',
+              'There are no articles in this category yet.'
+            )
+          }}
+        </p>
+      }
+    </div>
+  </div>
+</section>
+
+<app-final-cta />

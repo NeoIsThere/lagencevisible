@@ -1,0 +1,19 @@
+<div class="mockup-scene" [attr.data-variant]="variant()" [attr.aria-label]="i18n.t('Aperçu d’un site professionnel sur ordinateur et mobile', 'Preview of a professional website on desktop and mobile')" role="img">
+  <div class="browser-frame">
+    <div class="browser-bar"><i></i><i></i><i></i><span>{{ i18n.t('votre-entreprise.fr', 'your-business.fr') }}</span></div>
+    <div class="demo-site">
+      <div class="demo-nav"><b>{{ i18n.t(label(), 'Your business') }}</b><span></span><span></span><em>Contact</em></div>
+      <div class="demo-hero">
+        <div><small>{{ i18n.t('UNE EXPERTISE DE CONFIANCE', 'EXPERTISE YOU CAN TRUST') }}</small><strong>{{ i18n.t('Une réponse claire', 'A clear answer') }}<br />{{ i18n.t('à votre besoin.', 'to your needs.') }}</strong><p></p><p></p><button>{{ i18n.t('Découvrir le site', 'Explore the website') }}</button></div>
+        <div class="demo-visual"><span>01</span><i></i><b>{{ i18n.t('Votre site,', 'Your website,') }}<br />{{ i18n.t('bien pensé.', 'thoughtfully built.') }}</b></div>
+      </div>
+      <div class="demo-stats"><div><b>{{ i18n.t('Clair', 'Clear') }}</b><span>{{ i18n.t('Dès le premier regard', 'At first glance') }}</span></div><div><b>{{ i18n.t('Rapide', 'Fast') }}</b><span>{{ i18n.t('Sur tous les écrans', 'On every screen') }}</span></div><div><b>{{ i18n.t('Visible', 'Visible') }}</b><span>{{ i18n.t('Sur Google', 'On Google') }}</span></div></div>
+    </div>
+  </div>
+  <div class="phone-frame">
+    <div class="phone-speaker"></div>
+    <div class="demo-mobile"><div class="demo-mobile-nav"><b>{{ i18n.t(label(), 'Your business') }}</b><i></i></div><small>{{ i18n.t('UNE EXPERTISE DE CONFIANCE', 'EXPERTISE YOU CAN TRUST') }}</small><strong>{{ i18n.t('Une réponse claire à votre besoin.', 'A clear answer to your needs.') }}</strong><div class="mobile-visual"></div><button>{{ i18n.t('Nous contacter', 'Contact us') }}</button></div>
+  </div>
+  <div class="mockup-note note-one"><span>✓</span> {{ i18n.t('Mobile d’abord', 'Mobile first') }}</div>
+  <div class="mockup-note note-two"><span>↗</span> {{ i18n.t('Prêt à être trouvé', 'Ready to be found') }}</div>
+</div>

@@ -1,0 +1,31 @@
+<header class="site-header" [class.is-scrolled]="scrolled()">
+  <div class="container header-inner">
+    <a class="brand" routerLink="/" [attr.aria-label]="i18n.t('L’agence visible — Accueil', 'L’agence visible — Home')">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span>{{ site.brand }}</span>
+    </a>
+    <nav id="navigation-principale" class="main-nav" [class.is-open]="menuOpen()" [attr.aria-label]="i18n.t('Navigation principale', 'Main navigation')">
+      <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">{{ i18n.t('Accueil', 'Home') }}</a>
+      <a routerLink="/services" routerLinkActive="active">Services</a>
+      <a routerLink="/a-propos" routerLinkActive="active">{{ i18n.t('Qui sommes-nous ?', 'About us') }}</a>
+      <a routerLink="/blog" routerLinkActive="active">Blog</a>
+      <a class="button button-small" routerLink="/contact">{{ i18n.t('Prendre contact', 'Get in touch') }}</a>
+    </nav>
+    <div class="header-tools">
+      <button
+        class="language-switch"
+        type="button"
+        (click)="i18n.toggle()"
+        [attr.aria-label]="i18n.t('Afficher le site en anglais', 'Switch the website to French')"
+      >
+        <span aria-hidden="true">🇫🇷</span><span [class.current]="i18n.language() === 'fr'">FR</span>
+        <span class="language-divider" aria-hidden="true">/</span>
+        <span aria-hidden="true">🇬🇧</span><span [class.current]="i18n.language() === 'en'">EN</span>
+      </button>
+      <button class="menu-toggle" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-controls="navigation-principale">
+        <span class="sr-only">{{ menuOpen() ? i18n.t('Fermer le menu', 'Close the menu') : i18n.t('Ouvrir le menu', 'Open the menu') }}</span>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>

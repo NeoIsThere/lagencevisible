@@ -1,0 +1,100 @@
+@if (loading()) {
+  <section class="not-found">
+    <div>
+      <p class="eyebrow">{{ i18n.t('Chargement', 'Loading') }}</p>
+      <h1>{{ i18n.t('L’article arrive…', 'The article is loading…') }}</h1>
+    </div>
+  </section>
+} @else if (notFound()) {
+  <section class="not-found">
+    <div>
+      <strong>404</strong>
+      <h1>{{ i18n.t('Article introuvable', 'Article not found') }}</h1>
+      <p>
+        {{
+          i18n.t(
+            'Cet article n’existe pas ou a été déplacé.',
+            'This article does not exist or has been moved.'
+          )
+        }}
+      </p>
+      <a class="button" routerLink="/blog">
+        {{ i18n.t('Voir tous les articles', 'View all articles') }}
+      </a>
+    </div>
+  </section>
+} @else if (article(); as article) {
+  <header class="article-header">
+    <div class="container-narrow">
+      <nav class="breadcrumb" [attr.aria-label]="i18n.t('Fil d’Ariane', 'Breadcrumb')">
+        <a routerLink="/">{{ i18n.t('Accueil', 'Home') }}</a>
+        <span>/</span>
+        <a routerLink="/blog">Blog</a>
+        <span>/</span>
+        <span>{{ article.categoryLabel }}</span>
+      </nav>
+      <span class="tag">{{ article.categoryLabel }}</span>
+      <h1>{{ article.title }}</h1>
+      <p class="article-intro">{{ article.description }}</p>
+      <div class="article-byline">
+        <span>{{ i18n.t('Par', 'By') }} {{ article.author }}</span>
+        <time [attr.datetime]="article.date">{{ article.displayDate }}</time>
+        <span>{{ article.readingLabel }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="article-layout">
+    <aside
+      class="article-toc"
+      [attr.aria-label]="i18n.t('Sommaire de l’article', 'Article contents')"
+    >
+      <p>{{ i18n.t('Dans cet article', 'In this article') }}</p>
+      <ol>
+        @for (heading of headings(); track heading.id) {
+          <li><a [href]="'#' + heading.id">{{ heading.text }}</a></li>
+        }
+      </ol>
+    </aside>
+    <article>
+      <div class="markdown-body" [innerHTML]="content()"></div>
+      <section class="article-end-cta">
+        <p class="eyebrow eyebrow-light">
+          {{ i18n.t('Faisons le point', 'Review your website') }}
+        </p>
+        <h2>
+          {{
+            i18n.t(
+              'Votre site transmet-il les bonnes informations ?',
+              'Does your website communicate the right information?'
+            )
+          }}
+        </h2>
+        <p>
+          {{
+            i18n.t(
+              'Recevez une analyse simple et personnalisée de votre site actuel.',
+              'Receive a clear, personalised analysis of your current website.'
+            )
+          }}
+        </p>
+        <a class="button" routerLink="/contact">
+          {{ i18n.t('Demander une analyse', 'Request a website analysis') }}
+        </a>
+      </section>
+      @if (related().length) {
+        <section class="section-tight" aria-labelledby="related-articles-title">
+          <h2 id="related-articles-title" class="eyebrow">{{ i18n.t('À lire aussi', 'Related articles') }}</h2>
+          <div class="related-grid">
+            @for (item of related(); track item.slug) {
+              <a class="related-card" [routerLink]="['/blog', item.slug]">
+                <small>{{ item.readingLabel }}</small>
+                <h3>{{ item.title }}</h3>
+              </a>
+            }
+          </div>
+        </section>
+      }
+    </article>
+  </div>
+}

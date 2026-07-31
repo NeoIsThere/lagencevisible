@@ -1,0 +1,94 @@
+<header class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ i18n.t('Agence web · Nice', 'Web agency · Nice') }}</p>
+      <h1>{{ i18n.t('Faites exister votre entreprise', 'Give your business a strong') }} <em>{{ i18n.t('en ligne.', 'online presence.') }}</em></h1>
+      <p class="lead">{{ i18n.t(
+        'Nous créons des sites web qui permettent à votre entreprise d’être trouvée sur Google, comprise par les assistants IA et choisie par vos futurs clients.',
+        'We create websites that help your business get found on Google, understood by AI assistants and chosen by future customers.'
+      ) }}</p>
+      <div class="hero-actions">
+        <a class="button" routerLink="/contact">{{ i18n.t('Prendre contact', 'Get in touch') }} <span aria-hidden="true">↗</span></a>
+        <a class="button button-secondary" routerLink="/services">{{ i18n.t('Découvrir notre approche', 'Explore our approach') }} <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="reassurance"><span class="reassurance-badge" aria-hidden="true"><span>LV</span></span><span>{{ i18n.t('Agence basée à Nice · Création et amélioration de sites partout en France', 'Agency based in Nice · Website creation and improvement throughout France') }}</span></div>
+    </div>
+    <app-site-mockup />
+  </div>
+  <div class="container"><span class="hero-side-note">{{ i18n.t('Agence web indépendante', 'Independent web agency') }} · 43°42′N 7°16′E</span></div>
+</header>
+
+<section class="section section-dark" aria-labelledby="problem-title">
+  <div class="container">
+    <div class="problem-intro">
+      <div><p class="eyebrow eyebrow-light">{{ i18n.t('Le constat', 'The issue') }}</p><h2 id="problem-title">{{ i18n.t('Sans site web, votre entreprise laisse la place à ses concurrents.', 'Without a website, your business leaves room for its competitors.') }}</h2></div>
+      <div><p class="lead">{{ i18n.t(
+        'Sans site web clair, les outils d’IA ne trouvent pas votre entreprise. Elle passe alors à côté de nombreux clients qui les utilisent pour chercher un professionnel.',
+        'Without a clear website, AI tools cannot find your business. As a result, it misses many customers who use those tools to find a professional.'
+      ) }}</p></div>
+    </div>
+    <div class="consequence-grid">
+      <article class="consequence"><span class="consequence-number">01 / {{ i18n.t('TROUVER', 'FIND') }}</span><h3>{{ i18n.t('Vous êtes difficile à trouver', 'You are hard to find') }}</h3><p>{{ i18n.t('Google et les assistants IA disposent de peu de contenu fiable pour comprendre et présenter votre entreprise.', 'Google and AI assistants have little reliable content with which to understand and present your business.') }}</p></article>
+      <article class="consequence"><span class="consequence-number">02 / {{ i18n.t('CROIRE', 'TRUST') }}</span><h3>{{ i18n.t('Vous inspirez moins confiance', 'You inspire less trust') }}</h3><p>{{ i18n.t('Un client hésite davantage lorsqu’il ne trouve ni site officiel, ni présentation claire, ni informations complètes.', 'A customer is more likely to hesitate when they cannot find an official website, a clear presentation or complete information.') }}</p></article>
+      <article class="consequence"><span class="consequence-number">03 / {{ i18n.t('CHOISIR', 'CHOOSE') }}</span><h3>{{ i18n.t('Vous perdez des opportunités', 'You miss opportunities') }}</h3><p>{{ i18n.t('Chaque recherche qui mène vers un concurrent plutôt que vers vous représente une demande potentielle perdue.', 'Every search that leads to a competitor instead of your business represents a potential enquiry lost.') }}</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="benefits-title">
+  <div class="container">
+    <div class="section-head"><p class="eyebrow">{{ i18n.t('Votre présence officielle', 'Your official presence') }}</p><div><h2 id="benefits-title">{{ i18n.t('Votre site devient votre présence officielle en ligne.', 'Your website becomes your official online presence.') }}</h2></div></div>
+    <div class="benefit-grid">
+      <article class="benefit-card"><span class="benefit-icon" aria-hidden="true">⌕</span><h3>{{ i18n.t('Être trouvé', 'Get found') }}</h3><p>{{ i18n.t('Votre site donne à Google les informations nécessaires pour comprendre votre activité, vos services et votre localisation.', 'Your website gives Google the information it needs to understand your business, what you offer and your location.') }}</p></article>
+      <article class="benefit-card"><span class="benefit-icon" aria-hidden="true">◎</span><h3>{{ i18n.t('Être compris', 'Be understood') }}</h3><p>{{ i18n.t('Vos futurs clients et les assistants IA identifient clairement ce que vous proposez et à qui vos services s’adressent.', 'Future customers and AI assistants can clearly identify what you offer and who it is for.') }}</p></article>
+      <article class="benefit-card"><span class="benefit-icon" aria-hidden="true">✓</span><h3>{{ i18n.t('Inspirer confiance', 'Build trust') }}</h3><p>{{ i18n.t('Un site professionnel montre que votre entreprise est sérieuse, active et accessible.', 'A professional website shows that your business is serious, active and accessible.') }}</p></article>
+      <article class="benefit-card"><span class="benefit-icon" aria-hidden="true">↗</span><h3>{{ i18n.t('Recevoir des demandes', 'Receive enquiries') }}</h3><p>{{ i18n.t('Des boutons clairs et des formulaires simples permettent aux visiteurs de vous contacter rapidement.', 'Clear buttons and simple forms make it easy for visitors to contact you.') }}</p></article>
+    </div>
+    <p class="benefit-signature">{{ i18n.t('Plus de visibilité. Plus de confiance.', 'More visibility. More trust.') }} <span>{{ i18n.t('Plus d’opportunités.', 'More opportunities.') }}</span></p>
+  </div>
+</section>
+
+<section class="section-tight" aria-labelledby="ai-title">
+  <div class="container ai-panel">
+    <div class="ai-copy"><p class="eyebrow eyebrow-light">{{ i18n.t('Google & intelligence artificielle', 'Google & artificial intelligence') }}</p><h2 id="ai-title">{{ i18n.t('Vos clients cherchent déjà avec l’intelligence artificielle.', 'Your customers already search with artificial intelligence.') }}</h2><p>{{ i18n.t('Les internautes ne tapent plus seulement quelques mots dans Google. Ils posent désormais des questions complètes à ChatGPT, Copilot, Gemini et aux nouveaux moteurs de recherche.', 'People no longer type only a few words into Google. They now ask complete questions in ChatGPT, Copilot, Gemini and new search engines.') }}</p><p>{{ i18n.t('Pour pouvoir parler de votre entreprise, ces outils doivent trouver des informations claires, accessibles et cohérentes.', 'To mention your business, these tools need to find clear, accessible and consistent information.') }}</p><a class="button button-light" routerLink="/visibilite-google-ia">{{ i18n.t('Comprendre notre approche', 'Understand our approach') }} <span aria-hidden="true">↗</span></a></div>
+    <div class="ai-chat" [attr.aria-label]="i18n.t('Exemple de conversation entre une personne et un assistant IA', 'Example conversation between a person and an AI assistant')">
+      <div class="chat-message chat-message-user"><span>User</span><p>{{ i18n.t("J'ai besoin de services de...", 'I need services from...') }}</p></div>
+      <div class="chat-message chat-message-ai"><span>AI</span><p>{{ i18n.t("J'ai trouvé le site web de cette enterprise près de chez vous", 'I found the website of this business near you') }}</p></div>
+      <div class="chat-message chat-message-user"><span>User</span><p>{{ i18n.t('Je cherche un...', 'I am looking for a...') }}</p></div>
+      <div class="chat-message chat-message-ai"><span>AI</span><p>{{ i18n.t("J'effectue une recherche internet pour vous", 'I am searching the internet for you') }}</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section-head"><p class="eyebrow">{{ i18n.t('Notre métier', 'Our work') }}</p><div><h2 id="services-title">{{ i18n.t('Créer, analyser et améliorer votre site web.', 'Create, analyse and improve your website.') }}</h2><p>{{ i18n.t('Un périmètre clair, avec des mots simples et un interlocuteur direct.', 'A clear scope, straightforward language and direct contact.') }}</p></div></div>
+    <div class="service-list">
+      <a class="service-row" routerLink="/services"><span>01</span><h3>{{ i18n.t('Création de site web', 'Website creation') }}</h3><p>{{ i18n.t('Un site professionnel, rapide et adapté au mobile qui présente clairement votre entreprise.', 'A professional, fast and mobile-friendly website that presents your business clearly.') }}</p><span class="service-arrow" aria-hidden="true">↗</span></a>
+      <a class="service-row" routerLink="/services"><span>02</span><h3>{{ i18n.t('Amélioration & modification', 'Improvement & modification') }}</h3><p>{{ i18n.t('Une structure, des textes et une interface améliorés pour un site plus clair et plus simple à utiliser.', 'Improved structure, copy and interface for a website that is clearer and easier to use.') }}</p><span class="service-arrow" aria-hidden="true">↗</span></a>
+      <a class="service-row" routerLink="/visibilite-google-ia"><span>03</span><h3>{{ i18n.t('Analyse de site', 'Website analysis') }}</h3><p>{{ i18n.t('Un regard précis sur le contenu, l’expérience mobile, la structure et les points à corriger.', 'A precise review of the content, mobile experience, structure and points to correct.') }}</p><span class="service-arrow" aria-hidden="true">↗</span></a>
+    </div>
+    <div class="service-footer"><a class="button button-secondary" routerLink="/services">{{ i18n.t('Découvrir notre approche', 'Explore our approach') }}</a></div>
+  </div>
+</section>
+
+<section class="section section-dark" aria-labelledby="process-title">
+  <div class="container">
+    <div class="section-head"><p class="eyebrow eyebrow-light">{{ i18n.t('Notre méthode', 'Our method') }}</p><div><h2 id="process-title">{{ i18n.t('Un processus simple, du premier échange à la mise en ligne.', 'A straightforward process, from the first conversation to launch.') }}</h2><p>{{ i18n.t('Créer ou améliorer votre site ne doit pas être compliqué. Nous avançons avec vous, étape par étape.', 'Creating or improving your website should not be complicated. We move forward with you, step by step.') }}</p></div></div>
+    <div class="process-grid">
+      <article class="process-step"><span>01</span><h3>{{ i18n.t('Nous comprenons votre besoin', 'We understand your needs') }}</h3><p>{{ i18n.t('Vous nous présentez votre entreprise, votre site actuel et votre objectif.', 'You tell us about your business, current website and objective.') }}</p></article>
+      <article class="process-step"><span>02</span><h3>{{ i18n.t('Nous définissons les priorités', 'We define the priorities') }}</h3><p>{{ i18n.t('Nous organisons les pages, les textes principaux et la direction visuelle.', 'We organise the pages, key copy and visual direction.') }}</p></article>
+      <article class="process-step"><span>03</span><h3>{{ i18n.t('Nous créons ou améliorons', 'We create or improve') }}</h3><p>{{ i18n.t('Nous travaillons sur le site et vérifions son fonctionnement sur chaque écran.', 'We work on the website and check how it performs on every screen.') }}</p></article>
+      <article class="process-step"><span>04</span><h3>{{ i18n.t('Nous validons ensemble', 'We review it together') }}</h3><p>{{ i18n.t('Vous découvrez le résultat, puis nous intégrons les ajustements convenus.', 'You review the result, then we integrate the agreed adjustments.') }}</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-blue" aria-labelledby="faq-title">
+  <div class="container faq-wrap">
+    <div class="faq-sticky"><p class="eyebrow">FAQ</p><h2 id="faq-title">{{ i18n.t('Questions fréquentes', 'Frequently asked questions') }}</h2><p class="lead">{{ i18n.t('Des réponses simples avant de commencer.', 'Straightforward answers before you begin.') }}</p><a class="text-link" routerLink="/contact">{{ i18n.t('Poser une autre question', 'Ask another question') }} <span aria-hidden="true">↗</span></a></div>
+    <div class="faq-list">@for (faq of faqs(); track faq[0]; let first = $first) { <details [attr.open]="first ? '' : null"><summary>{{ faq[0] }}</summary><p>{{ faq[1] }}</p></details> }</div>
+  </div>
+</section>
+
+<app-final-cta />

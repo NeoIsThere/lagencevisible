@@ -1,0 +1,45 @@
+<header class="legal-header">
+  <div class="container-narrow">
+    <nav class="breadcrumb" [attr.aria-label]="i18n.t('Fil d’Ariane', 'Breadcrumb')">
+      <a routerLink="/">{{ i18n.t('Accueil', 'Home') }}</a><span>/</span><span>{{ i18n.t('Politique de confidentialité', 'Privacy policy') }}</span>
+    </nav>
+    <p class="eyebrow">{{ i18n.t('Vos données', 'Your data') }}</p>
+    <h1>{{ i18n.t('Politique de confidentialité', 'Privacy policy') }}</h1>
+    <p class="lead">{{ i18n.t('Cette page explique quelles données sont collectées et comment elles sont utilisées.', 'This page explains which data is collected and how it is used.') }}</p>
+    <p><small>{{ i18n.t('Dernière mise à jour : 31 juillet 2026', 'Last updated: 31 July 2026') }}</small></p>
+  </div>
+</header>
+
+<article class="container-narrow legal-prose">
+  <h2>{{ i18n.t('1. Responsable du traitement', '1. Data controller') }}</h2>
+  <p><strong>{{ site.legal.ownerName }}</strong>, {{ i18n.t('entrepreneur individuel exerçant sous le nom commercial', 'a French sole trader trading as') }} <strong>{{ site.legal.tradeName }}</strong>, {{ i18n.t('est responsable du traitement des données collectées sur ce site.', 'is the controller of personal data collected through this website.') }}</p>
+  <p>{{ i18n.t('Pour toute question ou demande relative à vos données :', 'For any question or request concerning your data:') }} <a class="text-link" [href]="'mailto:' + site.email">{{ site.email }}</a>.</p>
+
+  <h2>{{ i18n.t('2. Données collectées', '2. Data collected') }}</h2>
+  <p>{{ i18n.t('Le formulaire recueille votre nom, le nom de votre entreprise, votre adresse email professionnelle et votre message. Votre numéro de téléphone et l’adresse de votre site actuel sont facultatifs. La langue choisie est également transmise afin de vous répondre dans la langue appropriée.', 'The form collects your name, company name, work email address and message. Your telephone number and current website address are optional. The selected language is also transmitted so that we can reply in the appropriate language.') }}</p>
+  <p>{{ i18n.t('Lors de la consultation du site, GitHub Pages peut enregistrer l’adresse IP et des données techniques de connexion nécessaires à la sécurité et à la disponibilité du service.', 'When you visit the website, GitHub Pages may record your IP address and technical connection data required for the security and availability of the service.') }}</p>
+
+  <h2>{{ i18n.t('3. Utilisation des données', '3. How the data is used') }}</h2>
+  <p>{{ i18n.t('Ces données sont utilisées uniquement pour prendre connaissance de votre demande, vous répondre, assurer son suivi et protéger le formulaire contre les abus. Elles ne sont ni vendues ni utilisées pour vous inscrire automatiquement à une newsletter.', 'This data is used only to review your enquiry, respond to it, follow it up and protect the form against abuse. It is not sold or used to subscribe you automatically to a newsletter.') }}</p>
+
+  <h2>{{ i18n.t('4. Base légale', '4. Legal basis') }}</h2>
+  <p>{{ i18n.t('Le traitement repose sur les démarches précontractuelles effectuées à votre demande lorsque vous nous contactez au sujet d’un site web. La sécurisation du formulaire et le traitement des messages qui ne relèvent pas de telles démarches reposent sur l’intérêt légitime de l’éditeur à recevoir des demandes pertinentes et à protéger son site.', 'Processing is based on the steps taken at your request before entering into a contract when you contact us about a website. Protecting the form and handling messages that do not relate to such steps are based on the publisher’s legitimate interests in receiving genuine enquiries and safeguarding the website.') }}</p>
+
+  <h2>{{ i18n.t('5. Destinataires et prestataires', '5. Recipients and service providers') }}</h2>
+  <p>{{ i18n.t('Les données sont accessibles uniquement à l’éditeur et aux personnes chargées de répondre à votre demande. Elles sont transmises aux prestataires techniques indispensables à l’acheminement du message, notamment', 'The data is accessible only to the publisher and those responsible for responding to your enquiry. It is shared with the technical providers required to deliver the message, including') }} <strong>{{ site.legal.emailProcessorName }}</strong>, {{ i18n.t('qui assure l’envoi des emails, ainsi qu’aux prestataires hébergeant la fonction d’envoi et la boîte de réception lorsqu’ils sont nécessaires.', 'which provides email delivery, together with the providers hosting the sending function and receiving mailbox where required.') }}</p>
+  <p><a class="text-link" [href]="site.legal.emailProcessorPrivacyUrl" target="_blank" rel="noopener">{{ i18n.t('Politique de confidentialité de Resend', 'Resend privacy policy') }} <span aria-hidden="true">↗</span></a></p>
+
+  <h2>{{ i18n.t('6. Conservation', '6. Retention') }}</h2>
+  <p>{{ i18n.t('Les données sont conservées pendant le traitement et le suivi de votre demande. Une fois ce suivi terminé, elles sont supprimées ou, lorsque cela est nécessaire, archivées pendant la durée imposée par une obligation légale ou nécessaire à la constatation, à l’exercice ou à la défense de droits. Les journaux techniques sont conservés selon les durées appliquées par les prestataires utilisés.', 'Data is retained while your enquiry is being processed and followed up. Once that follow-up has ended, it is deleted or, where necessary, archived for as long as required by law or to establish, exercise or defend legal claims. Technical logs are retained for the periods applied by the providers used.') }}</p>
+
+  <h2>{{ i18n.t('7. Transferts hors de l’Union européenne', '7. Transfers outside the European Union') }}</h2>
+  <p>{{ i18n.t('GitHub Pages et Resend sont exploités par des entreprises établies aux États-Unis et peuvent y traiter certaines données. Resend indique stocker ses données client aux États-Unis et encadrer les transferts depuis l’Union européenne au moyen des clauses contractuelles types de la Commission européenne.', 'GitHub Pages and Resend are operated by companies established in the United States and may process certain data there. Resend states that it stores customer data in the United States and safeguards transfers from the European Union through the European Commission’s Standard Contractual Clauses.') }}</p>
+  <p><a class="text-link" [href]="site.legal.emailProcessorDpaUrl" target="_blank" rel="noopener">{{ i18n.t('Accord de traitement des données de Resend', 'Resend Data Processing Addendum') }} <span aria-hidden="true">↗</span></a></p>
+
+  <h2>{{ i18n.t('8. Vos droits', '8. Your rights') }}</h2>
+  <p>{{ i18n.t('Vous pouvez demander l’accès à vos données, leur rectification, leur effacement ou la limitation de leur traitement. Selon la base légale applicable, vous pouvez également vous opposer au traitement ou demander la portabilité des données que vous avez fournies. Écrivez à', 'You may request access to your data, its rectification or erasure, or restriction of its processing. Depending on the applicable legal basis, you may also object to processing or request the portability of data you have provided. Write to') }} <a class="text-link" [href]="'mailto:' + site.email">{{ site.email }}</a>.</p>
+  <p>{{ i18n.t('Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la', 'If, after contacting us, you believe that your rights have not been respected, you may lodge a complaint with the') }} <a class="text-link" href="https://www.cnil.fr/" target="_blank" rel="noopener">CNIL <span aria-hidden="true">↗</span></a>.</p>
+
+  <h2>{{ i18n.t('9. Cookies et préférence de langue', '9. Cookies and language preference') }}</h2>
+  <p>{{ i18n.t('Le site ne dépose aucun cookie publicitaire ou de mesure d’audience. Il mémorise uniquement votre choix de langue dans le stockage local de votre navigateur afin de conserver cette préférence pendant votre navigation. Aucun bandeau de consentement n’est affiché dans cette configuration.', 'The website does not set advertising or audience measurement cookies. It stores only your language choice in your browser’s local storage so that this preference is retained while you browse. No consent banner is displayed in this configuration.') }}</p>
+</article>

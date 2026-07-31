@@ -1,0 +1,38 @@
+<header class="legal-header">
+  <div class="container-narrow">
+    <nav class="breadcrumb" [attr.aria-label]="i18n.t('Fil d’Ariane', 'Breadcrumb')">
+      <a routerLink="/">{{ i18n.t('Accueil', 'Home') }}</a><span>/</span><span>{{ i18n.t('Mentions légales', 'Legal notice') }}</span>
+    </nav>
+    <p class="eyebrow">{{ i18n.t('Informations légales', 'Legal information') }}</p>
+    <h1>{{ i18n.t('Mentions légales', 'Legal notice') }}</h1>
+    <p class="lead">{{ i18n.t('Informations relatives à l’éditeur et à l’hébergement du présent site.', 'Information about this website’s publisher and hosting provider.') }}</p>
+  </div>
+</header>
+
+<article class="container-narrow legal-prose">
+  <h2>{{ i18n.t('Éditeur du site', 'Website publisher') }}</h2>
+  <p>{{ i18n.t('Le présent site est édité par :', 'This website is published by:') }}</p>
+  <p><strong>{{ site.legal.ownerName }}</strong>, {{ i18n.t('entrepreneur individuel (EI), exerçant sous le nom commercial', 'a French sole trader (entrepreneur individuel, EI), trading as') }} <strong>{{ site.legal.tradeName }}</strong>.</p>
+  <p>{{ i18n.t('Adresse de domiciliation :', 'Business address:') }}<br />{{ site.legal.address }}</p>
+  <p>SIREN : {{ site.legal.siren }}<br />SIRET : {{ site.legal.siret }}</p>
+  <p>{{ i18n.t('Immatriculé au RCS de', 'Registered with the Trade and Companies Register of') }} {{ site.legal.rcsCity }} {{ i18n.t('sous le numéro', 'under number') }} {{ site.legal.siren }}.</p>
+  <p>{{ i18n.t('Adresse électronique :', 'Email address:') }} <a class="text-link" [href]="'mailto:' + site.email">{{ site.email }}</a></p>
+
+  <h2>{{ i18n.t('Directeur de la publication', 'Publishing director') }}</h2>
+  <p>{{ site.legal.publishingDirector }}</p>
+
+  <h2>{{ i18n.t('Hébergement', 'Hosting') }}</h2>
+  <p>{{ i18n.t('Le site est hébergé par :', 'The website is hosted by:') }}</p>
+  <address>
+    <strong>{{ site.legal.hostName }}</strong><br />
+    {{ site.legal.hostAddress }}<br />
+    <a class="text-link" [href]="site.legal.hostWebsite" target="_blank" rel="noopener">{{ site.legal.hostWebsite }}</a><br />
+    <a class="text-link" [href]="site.legal.hostSupport" target="_blank" rel="noopener">{{ i18n.t('Support GitHub', 'GitHub Support') }}</a>
+  </address>
+
+  <h2>{{ i18n.t('Propriété intellectuelle', 'Intellectual property') }}</h2>
+  <p>{{ i18n.t('Les textes, éléments graphiques, logos, visuels, créations et contenus présents sur ce site sont protégés par les règles applicables à la propriété intellectuelle. Toute reproduction ou utilisation non autorisée est interdite.', 'The copy, graphic elements, logos, visuals, designs and content on this website are protected by applicable intellectual property laws. Any unauthorised reproduction or use is prohibited.') }}</p>
+
+  <h2>{{ i18n.t('Responsabilité', 'Liability') }}</h2>
+  <p>{{ i18n.t('L’éditeur s’efforce de fournir des informations exactes et à jour, mais ne peut garantir l’absence d’erreurs ou d’omissions. Les informations présentes sur ce site sont fournies à titre général et ne constituent pas une garantie de résultat.', 'The publisher makes every effort to provide accurate and up-to-date information but cannot guarantee that it is free from errors or omissions. The information on this website is general in nature and does not constitute a guarantee of results.') }}</p>
+</article>
