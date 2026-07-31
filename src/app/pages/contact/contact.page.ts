@@ -10,16 +10,18 @@ import { contactEndpoint, SITE_CONFIG } from '../../core/site.config';
 export class ContactPage {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
-  private readonly loadedAt = Date.now();
   readonly i18n = inject(LanguageService);
   readonly site = SITE_CONFIG;
   readonly submitting = signal(false);
   readonly status = signal<'idle' | 'success' | 'error'>('idle');
-  private readonly messageKey = signal<'wait' | 'configuration' | 'success' | 'send' | 'rate-limit' | null>(null);
+  private readonly messageKey = signal<'validation' | 'configuration' | 'success' | 'send' | 'rate-limit' | null>(null);
   readonly message = computed(() => {
     switch (this.messageKey()) {
-      case 'wait':
-        return this.i18n.t('Veuillez patienter un instant puis réessayer.', 'Please wait a moment, then try again.');
+      case 'validation':
+        return this.i18n.t(
+          'Vérifiez les champs indiqués avant d’envoyer votre demande.',
+          'Check the highlighted fields before sending your enquiry.',
+        );
       case 'configuration':
         return this.i18n.t(
           'Le formulaire doit encore être relié à son service d’envoi. Vous pouvez nous écrire directement par email.',
@@ -51,7 +53,6 @@ export class ContactPage {
     phone: ['', [Validators.maxLength(30)]],
     website: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(3000)]],
-    address: [''],
   });
 
   hasError(name: keyof ContactPage['form']['controls'], error?: string): boolean {
@@ -60,27 +61,31 @@ export class ContactPage {
   }
 
   async submit(): Promise<void> {
+    if (this.submitting()) return;
+
     this.status.set('idle');
     this.messageKey.set(null);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      return;
-    }
-    if (this.form.controls.address.value) return;
-    if (Date.now() - this.loadedAt < 1200) {
       this.status.set('error');
-      this.messageKey.set('wait');
+      this.messageKey.set('validation');
+      queueMicrotask(() => {
+        const firstInvalidField = document.querySelector<HTMLElement>('.contact-form [aria-invalid="true"]');
+        firstInvalidField?.focus();
+      });
       return;
     }
+
     const endpoint = contactEndpoint();
     if (!endpoint) {
       this.status.set('error');
       this.messageKey.set('configuration');
       return;
     }
+
     this.submitting.set(true);
     try {
-      const { address: _honeypot, ...payload } = this.form.getRawValue();
+      const payload = this.form.getRawValue();
       await firstValueFrom(
         this.http.post(endpoint, {
           ...payload,
