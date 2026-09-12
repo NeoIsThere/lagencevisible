@@ -18,7 +18,7 @@ export class ServicesPage {
         inLanguage: this.i18n.language(),
         name: this.i18n.t('Création, amélioration et analyse de sites web', 'Website creation, improvement and analysis'),
         url: `${baseUrl}/services/`,
-        provider: { '@type': 'ProfessionalService', '@id': `${baseUrl}/#organization`, name: SITE_CONFIG.brand, areaServed: 'France' },
+        provider: { '@type': 'ProfessionalService', '@id': `${baseUrl}/#organization`, name: SITE_CONFIG.brand },
         serviceType: this.i18n.t(
           ['Création de site web', 'Amélioration et modification de site web', 'Analyse de site web'],
           ['Website creation', 'Website improvement and modification', 'Website analysis'],

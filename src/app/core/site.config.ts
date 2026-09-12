@@ -3,7 +3,6 @@ export const SITE_CONFIG = {
   baseline: 'Le site qui fait exister votre entreprise en ligne.',
   siteUrl: 'https://lagencevisible.com',
   email: 'contact@mail.lagencevisible.com',
-  location: 'Nice, France',
   legal: {
     tradeName: 'L’agence visible',
     legalForm: 'Entrepreneur individuel',
@@ -25,10 +24,18 @@ export const SITE_CONFIG = {
 
 declare global {
   interface Window {
-    __SITE_CONFIG__?: { CONTACT_FORM_ENDPOINT?: string };
+    __SITE_CONFIG__?: { CONTACT_FORM_ENDPOINT?: string; OPERATOR_API_ORIGIN?: string };
   }
 }
 
 export function contactEndpoint(): string {
   return window.__SITE_CONFIG__?.CONTACT_FORM_ENDPOINT?.trim() ?? '';
+}
+
+export function operatorApiUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) return path;
+  if (typeof window === 'undefined') return path;
+  const local = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
+  const configured = window.__SITE_CONFIG__?.OPERATOR_API_ORIGIN?.trim().replace(/\/$/, '') || 'https://api.lagencevisible.com';
+  return `${local ? '' : configured}${path.startsWith('/') ? path : `/${path}`}`;
 }

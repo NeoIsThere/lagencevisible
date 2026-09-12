@@ -20,7 +20,6 @@ export class VisibilityPage {
         description: this.i18n.t('Analyse du contenu, de la structure, de l’affichage mobile et des points à améliorer sur un site web.', 'Analysis of website content, structure, mobile display and areas for improvement.'),
         url: `${baseUrl}/visibilite-google-ia/`,
         provider: { '@type': 'Organization', '@id': `${baseUrl}/#organization`, name: SITE_CONFIG.brand },
-        areaServed: 'France',
       });
     });
   }

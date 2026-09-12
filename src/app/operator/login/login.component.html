@@ -1,0 +1,13 @@
+<section class="login-panel panel" aria-labelledby="login-title">
+  <p class="eyebrow">Local Lead Engine</p>
+  <h1 id="login-title">Log in</h1>
+  <p class="intro">Sign in to manage your searches and leads.</p>
+  <form (ngSubmit)="submit()" #loginForm="ngForm">
+    <label for="username">Username</label>
+    <input id="username" name="username" autocomplete="username" [(ngModel)]="username" required maxlength="120" [disabled]="busy()">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" [(ngModel)]="password" required maxlength="256" [disabled]="busy()">
+    @if (error()) { <p class="error-text" role="alert">{{ error() }}</p> }
+    <button type="submit" [disabled]="busy() || loginForm.invalid">{{ busy() ? "Logging in…" : "Log in" }}</button>
+  </form>
+</section>

@@ -1,0 +1,24 @@
+<div class="app-shell operator-theme">
+  @if (auth.username()) {
+  <header class="topbar">
+    <a class="brand" routerLink="/operator/candidates" aria-label="Local Lead Engine candidates">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>
+        <strong>LOCAL LEAD</strong>
+        <small>ENGINE</small>
+      </span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <a routerLink="/operator/candidates" routerLinkActive="active" ariaCurrentWhenActive="page">Candidates</a>
+      <a routerLink="/operator/search" routerLinkActive="active" ariaCurrentWhenActive="page">Search</a>
+      <a routerLink="/operator/advanced" routerLinkActive="active" ariaCurrentWhenActive="page">Advanced</a>
+    </nav>
+
+    <button class="logout-button" type="button" (click)="logout()" [disabled]="loggingOut()">{{ loggingOut() ? "Logging out…" : "Log out" }}</button>
+  </header>
+  }
+  @if (logoutError()) { <p class="error-text" role="alert">{{ logoutError() }}</p> }
+
+  <main><router-outlet /></main>
+</div>

@@ -1,0 +1,216 @@
+<header class="page-heading">
+  <div>
+    <h1 class="page-title">Candidates</h1>
+    <nav class="candidate-views" aria-label="Candidate views">
+      <a routerLink="/operator/candidates" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Ready</a>
+      <a routerLink="/operator/candidates/attention" routerLinkActive="active" ariaCurrentWhenActive="page">Needs attention</a>
+    </nav>
+  </div>
+  <div class="queue-total" aria-label="Candidates waiting">
+    <strong>{{ total() }}</strong>
+    <span>waiting</span>
+  </div>
+</header>
+
+@if (queueError() && leads().length) {
+  <p class="queue-error" role="status">{{ queueError() }}</p>
+}
+
+@if (loading()) {
+  <section class="candidate-card loading-state" aria-label="Loading candidates">
+    <div class="skeleton preview-skeleton"></div>
+    <div class="details-skeleton">
+      <div class="skeleton line wide"></div>
+      <div class="skeleton line"></div>
+      <div class="skeleton block"></div>
+    </div>
+  </section>
+} @else if (leads().length) {
+  <section class="candidate-list" aria-label="Candidates waiting for a decision">
+    @for (current of leads(); track current.id; let leadIndex = $index) {
+      <article class="candidate-card" [attr.id]="'lead-' + current.id">
+        <header class="candidate-header">
+          <div class="identity">
+            <span>{{ leadIndex + 1 }} of {{ total() }} · {{ current.city }}</span>
+            <h2>{{ current.businessName }}</h2>
+          </div>
+          <div class="fit-score" title="Overall lead fit">
+            <strong>{{ current.scores.final }}</strong>
+            <span>fit</span>
+          </div>
+        </header>
+
+        <div class="candidate-main">
+          <section class="website-summary" aria-label="Website evidence">
+            <div class="browser-frame">
+              <div class="browser-bar">
+                <span></span><span></span><span></span>
+                <small>{{ current.websiteUrl || 'Website unavailable' }}</small>
+              </div>
+              @if (current.screenshotUrl) {
+                <img [src]="screenshotUrl(current.screenshotUrl)" [alt]="current.businessName + ' website screenshot'" />
+              } @else {
+                <div class="no-preview"><span>Preview unavailable</span></div>
+              }
+            </div>
+
+            <div class="audit-strip" aria-label="Website audit scores">
+              <div title="Performance"><span>Performance</span><strong>{{ auditScore(current, 'performance') }}</strong></div>
+              <div title="Accessibility"><span>Accessibility</span><strong>{{ auditScore(current, 'accessibility') }}</strong></div>
+              <div title="Best practices"><span>Best practices</span><strong>{{ auditScore(current, 'bestPractices') }}</strong></div>
+              <div title="SEO"><span>SEO</span><strong>{{ auditScore(current, 'seo') }}</strong></div>
+            </div>
+
+            <nav class="source-links" aria-label="Candidate sources">
+              @if (current.websiteUrl) { <a [href]="current.websiteUrl" target="_blank" rel="noreferrer">Website ↗</a> }
+              @if (current.mapsUrl) { <a [href]="current.mapsUrl" target="_blank" rel="noreferrer">Maps ↗</a> }
+              @if (current.contactEmailSourceUrl) { <a [href]="current.contactEmailSourceUrl" target="_blank" rel="noreferrer">Email source ↗</a> }
+            </nav>
+          </section>
+
+          <section class="decision">
+            <div class="candidate-meta">
+              <span>{{ conditionLabel(current.websiteCondition) }}</span>
+              <span class="language" [title]="current.languageReason">{{ current.communicationLanguage.toUpperCase() }}</span>
+              <span>{{ current.contactEmail || 'No contact email' }}</span>
+            </div>
+
+            <p class="qualification">{{ qualificationSummary(current.qualificationReason) }}</p>
+
+            <details class="email-card">
+              <summary>
+                <span>Email draft</span>
+                <strong>{{ current.email.subject || 'No subject' }}</strong>
+              </summary>
+              <p>{{ current.email.body || 'No draft is available.' }}</p>
+            </details>
+
+            <details class="analysis-details">
+              <summary>Lead details</summary>
+              @if (qualificationSummary(current.qualificationReason) !== current.qualificationReason) {
+                <p class="qualification-full">{{ current.qualificationReason }}</p>
+              }
+
+              <section class="score-grid" aria-label="Qualification scores">
+                <div><span>Ability to pay</span><strong>{{ current.scores.abilityToPay }}</strong></div>
+                <div><span>Website need</span><strong>{{ current.scores.websiteNeed }}</strong></div>
+                <div><span>Contactability</span><strong>{{ current.scores.contactability }}</strong></div>
+              </section>
+
+              @if (current.websiteProblems.length) {
+                <section class="detail-section">
+                  <h3>Website opportunities</h3>
+                  <div class="problem-list">
+                    @for (problem of current.websiteProblems; track $index) {
+                      <article>
+                        <strong>{{ problem.problem }}</strong>
+                        <p>{{ problem.businessImpact }}</p>
+                        <dl>
+                          <div><dt>Fix</dt><dd>{{ problem.recommendedFix }}</dd></div>
+                          <div><dt>Evidence</dt><dd>{{ problem.evidence }}</dd></div>
+                        </dl>
+                      </article>
+                    }
+                  </div>
+                </section>
+              }
+
+              @if (current.deliveryApproach; as approach) {
+                <section class="detail-section">
+                  <div class="detail-heading">
+                    <h3>Delivery</h3>
+                    <span [class]="'risk ' + approach.accessRisk">{{ approach.accessRisk }} access risk</span>
+                  </div>
+                  <strong class="detail-lead">{{ strategyLabel(approach.strategy) }}</strong>
+                  <p>{{ approach.recommendation }}</p>
+                  <p class="muted-copy">{{ approach.why }}</p>
+
+                  <div class="detail-columns">
+                    <div>
+                      <h4>Required access</h4>
+                      <ul>@for (item of approach.requiredAccess; track $index) { <li>{{ item }}</li> }</ul>
+                    </div>
+                    <div>
+                      <h4>Discovery questions</h4>
+                      <ul>@for (question of approach.discoveryQuestions; track $index) { <li>{{ question }}</li> }</ul>
+                    </div>
+                  </div>
+
+                  @if (approach.rebuildTriggers.length) {
+                    <details class="nested-details">
+                      <summary>Rebuild or migration triggers</summary>
+                      <p>{{ approach.accessRiskReason }}</p>
+                      <ul>@for (trigger of approach.rebuildTriggers; track $index) { <li>{{ trigger }}</li> }</ul>
+                    </details>
+                  }
+                </section>
+              }
+
+              @if (current.commercialEstimate; as estimate) {
+                <section class="detail-section estimate">
+                  <h3>Project estimate</h3>
+                  <div class="estimate-summary">
+                    <div>
+                      <span>Quote</span>
+                      <strong>{{ formatEuro(estimate.recommendedPriceEur) }}</strong>
+                      <small>{{ formatEuro(estimate.priceRangeMinEur) }}–{{ formatEuro(estimate.priceRangeMaxEur) }} range</small>
+                    </div>
+                    <div>
+                      <span>Delivery</span>
+                      <strong>{{ estimate.aiAssistedHoursMin }}–{{ estimate.aiAssistedHoursMax }} h</strong>
+                      <small>Estimated active time</small>
+                    </div>
+                  </div>
+                  <p><strong>Scope:</strong> {{ estimate.recommendedScope }}</p>
+                  <p class="muted-copy">{{ estimate.pricingRationale }}</p>
+
+                  @if (estimate.implementationPlan.length) {
+                    <details class="nested-details">
+                      <summary>Implementation plan</summary>
+                      <ol class="implementation-plan">
+                        @for (item of estimate.implementationPlan; track $index) {
+                          <li>
+                            <strong>{{ item.task }} · {{ item.aiAssistedHours }} h</strong>
+                            <p>{{ item.whatYouDo }}</p>
+                            <small>Deliverable: {{ item.deliverable }}</small>
+                            <small>Client input: {{ item.clientInputNeeded }}</small>
+                          </li>
+                        }
+                      </ol>
+                    </details>
+                  }
+
+                  @if (estimate.assumptions.length) {
+                    <details class="nested-details">
+                      <summary>Assumptions</summary>
+                      <ul>@for (assumption of estimate.assumptions; track $index) { <li>{{ assumption }}</li> }</ul>
+                    </details>
+                  }
+                </section>
+              }
+            </details>
+
+            @if (actionError(); as failure) {
+              @if (failure.id === current.id) { <p class="action-error" role="alert">{{ failure.message }}</p> }
+            }
+
+            <div class="actions">
+              <button class="reject" type="button" [disabled]="!!processing()" (click)="act(current, 'reject')">
+                @if (isProcessing(current, 'reject')) { Working… } @else { Reject }
+              </button>
+              <button class="send" type="button" [disabled]="!!processing()" (click)="act(current, 'send')">
+                @if (isProcessing(current, 'send')) { Sending… } @else { Send email }
+              </button>
+            </div>
+          </section>
+        </div>
+      </article>
+    }
+  </section>
+} @else {
+  <section class="panel empty-state">
+    <div class="pulse"></div>
+    <h2>No candidates yet</h2>
+    <p [class.error-text]="queueError()">{{ queueError() || 'Start a search to find new prospects.' }}</p>
+  </section>
+}

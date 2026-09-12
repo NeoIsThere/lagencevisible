@@ -1,0 +1,46 @@
+<header class="environment-header">
+  <div>
+    <h1 class="page-title">Environment</h1>
+    <p class="page-intro">Loaded runtime values. Secrets stay masked.</p>
+  </div>
+  <button type="button" [disabled]="loading()" (click)="refresh()">REFRESH</button>
+</header>
+
+<section class="environment-panel panel">
+  <div class="toolbar">
+    <label>
+      <span>Filter</span>
+      <input
+        type="search"
+        placeholder="Variable name"
+        [ngModel]="filter()"
+        (ngModelChange)="updateFilter($event)"
+        aria-label="Filter environment variables by name"
+      />
+    </label>
+    <p>{{ configuredCount() }} / {{ variables().length }} configured · {{ visibleVariables().length }} shown</p>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton loading-block"></div>
+  } @else if (error()) {
+    <div class="empty-state error-text">{{ error() }}</div>
+  } @else if (visibleVariables().length) {
+    <div class="variable-list">
+      <div class="variable-row header-row" aria-hidden="true">
+        <span>Name</span><span>Value</span><span>Status</span>
+      </div>
+      @for (variable of visibleVariables(); track variable.name) {
+        <article class="variable-row">
+          <code>{{ variable.name }}</code>
+          <span class="value" [class.placeholder]="!variable.configured">{{ displayValue(variable) }}</span>
+          <span class="status" [class.loaded]="variable.configured">
+            <i></i>{{ variable.configured ? 'Loaded' : 'Not set' }}
+          </span>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">No matches</div>
+  }
+</section>

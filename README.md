@@ -1,6 +1,6 @@
 # L’agence visible — site d’agence
 
-Site vitrine statique bilingue français/anglais pour une agence web basée à Nice. Le projet utilise Angular 21, des composants standalone, TypeScript strict, SCSS, un blog Markdown, le prerender Angular et des URL propres compatibles avec GitHub Pages.
+Site vitrine statique bilingue français/anglais pour une agence web indépendante. Le projet utilise Angular 21, des composants standalone, TypeScript strict, SCSS, un blog Markdown, le prerender Angular et des URL propres compatibles avec GitHub Pages.
 
 ## Démarrage
 
@@ -10,6 +10,18 @@ npm start
 ```
 
 Le site local est disponible sur `http://localhost:4201/`.
+
+## Espace opérateur
+
+L'icône de connexion dans l'en-tête ouvre `/login`. Après authentification,
+l'interface Local Lead Engine est disponible sous `/operator`. En production,
+ses requêtes authentifiées ciblent `https://api.lagencevisible.com`; en local,
+`npm start` utilise le proxy HTTPS défini dans `proxy.conf.cjs`.
+
+Le backend doit utiliser `PUBLIC_APP_URL=https://lagencevisible.com` avec
+`AUTH_USERNAME` et `AUTH_PASSWORD`. `public/site-config.js` contient uniquement
+l'origine publique de l'API, jamais les identifiants. Les routes `/login` et
+`/operator/**` sont rendues côté client et ne sont pas pré-générées.
 
 ## Configuration avant publication
 

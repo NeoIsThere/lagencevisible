@@ -1,0 +1,75 @@
+<header class="research-header">
+  <div>
+    <h1 class="page-title">Candidates</h1>
+    <nav class="candidate-views" aria-label="Candidate views">
+      <a routerLink="/operator/candidates" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Ready</a>
+      <a routerLink="/operator/candidates/attention" routerLinkActive="active" ariaCurrentWhenActive="page">Needs attention</a>
+    </nav>
+    <p class="page-intro">Evidence collection is incomplete. The system retries automatically; you can retry sooner here.</p>
+  </div>
+  <button type="button" (click)="load()" [disabled]="loading()">Refresh</button>
+</header>
+
+@if (loading()) {
+  <section class="panel state-panel" aria-live="polite">Loading research candidates...</section>
+} @else if (error()) {
+  <section class="panel state-panel error-text" role="alert">{{ error() }}</section>
+} @else if (!leads().length) {
+  <section class="panel state-panel">
+    <strong>Nothing needs attention.</strong>
+    <span>Retryable evidence issues will appear here.</span>
+  </section>
+} @else {
+  <section class="research-summary">
+    <strong>{{ total() }}</strong>
+    <span>candidate{{ total() === 1 ? '' : 's' }} awaiting evidence</span>
+  </section>
+
+  <div class="research-list">
+    @for (lead of leads(); track lead.id) {
+      <article class="panel research-card">
+        <header>
+          <div>
+            <span class="reason-code">{{ lead.failureCode || 'NEEDS_ATTENTION' }}</span>
+            <h2>{{ lead.businessName }}</h2>
+            <p>{{ lead.city }}</p>
+          </div>
+          <div class="source-links">
+            @if (lead.mapsUrl) { <a [href]="lead.mapsUrl" target="_blank" rel="noopener noreferrer">Maps</a> }
+            @if (lead.websiteUrl) { <a [href]="lead.websiteUrl" target="_blank" rel="noopener noreferrer">Website</a> }
+          </div>
+        </header>
+
+        <p class="reason">{{ reason(lead.failureCode) }}</p>
+        @if (lead.qualificationReason) { <p class="detail">{{ lead.qualificationReason }}</p> }
+        @if (actionError()?.id === lead.id) { <p class="action-error" role="alert">{{ actionError()?.message }}</p> }
+
+        @if (lead.contactPoints.length) {
+          <div class="channels" aria-label="Preserved contact channels">
+            @for (point of lead.contactPoints; track point.kind + point.value) {
+              <a [href]="channelHref(point)" target="_blank" rel="noopener noreferrer">
+                <span>{{ channelLabel(point) }}</span>
+                <strong>{{ point.value }}</strong>
+                <small>{{ point.verificationStatus }} · confidence {{ percent(point.confidence) }}</small>
+              </a>
+            }
+          </div>
+        } @else {
+          <p class="no-channels">No attributable alternate contact channel has been observed.</p>
+        }
+
+        <footer>
+          <div>
+            <span>Refreshed {{ lead.evidenceRefreshedAt ? (lead.evidenceRefreshedAt | date:'medium') : 'not yet' }}</span>
+            <span>Attempt {{ lead.attemptGeneration }} of 3</span>
+            @if (lead.refreshActive) { <span>Automatic retry queued</span> }
+            @if (lead.retryAfter) { <span>Automatic retry {{ lead.retryAfter | date:'medium' }}</span> }
+          </div>
+          <button type="button" (click)="retry(lead)" [disabled]="!!retrying() || lead.refreshActive || lead.attemptGeneration >= 3">
+            @if (retrying() === lead.id) { Queuing… } @else if (lead.refreshActive) { Retry queued } @else if (lead.attemptGeneration >= 3) { Retry limit reached } @else { Retry now }
+          </button>
+        </footer>
+      </article>
+    }
+  </div>
+}

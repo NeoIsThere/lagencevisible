@@ -1,0 +1,422 @@
+<header class="search-header">
+  <h1 class="page-title">Search</h1>
+  @if (!composerOpen()) {
+    <button type="button" class="new-search-button" (click)="openComposer()">
+      <span aria-hidden="true">+</span> New search
+    </button>
+  }
+</header>
+
+@if (composerOpen()) {
+  <section class="search-composer panel" aria-labelledby="new-search-title">
+    <div class="composer-heading">
+      <h2 id="new-search-title">New search</h2>
+    </div>
+
+    <div class="composer-fields">
+      <label class="location-field">
+        <span>Location</span>
+        <select
+          [value]="selectedClusterId() || ''"
+          [disabled]="scheduling() || !strategyCatalog()"
+          (change)="selectLocation($any($event.target).value)"
+        >
+          <option value="">Select a location</option>
+          @for (location of strategyCatalog()?.clusters || []; track location.id) {
+            <option [value]="location.id">{{ location.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="continuation-option" [class.selected]="continueUntilValidatedLead()">
+        <input
+          type="checkbox"
+          [checked]="continueUntilValidatedLead()"
+          [disabled]="scheduling()"
+          (change)="setContinueUntilValidatedLead($any($event.target).checked)"
+        >
+        <span class="toggle-copy">
+          <strong>Continue until a candidate is found</strong>
+          <small>Extends the 10-search batch within the campaign limits.</small>
+        </span>
+      </label>
+
+      <button
+        type="button"
+        class="schedule-button"
+        [disabled]="!canSchedule()"
+        (click)="scheduleSearch()"
+      >
+        {{ scheduling() ? 'Scheduling...' : 'Schedule search' }}
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+
+    @if (catalogError()) {
+      <p class="inline-feedback error-text" role="status">{{ catalogError() }}</p>
+    }
+  </section>
+}
+
+@if (scheduleMessage()) {
+  <p class="page-feedback success" role="status">{{ scheduleMessage() }}</p>
+}
+@if (scheduleError()) {
+  <p class="page-feedback error-text" role="alert">{{ scheduleError() }}</p>
+}
+
+<section class="search-workspace" aria-label="Scheduled search campaigns">
+  <aside class="schedule-list panel">
+    <header class="section-heading">
+      <h2>Searches</h2>
+      <span class="queue-count">{{ queuedLabel() }}</span>
+    </header>
+
+    <div class="schedule-items">
+      @if (loadingSchedules() && schedules().length === 0) {
+        <div class="list-empty loading-state"><i></i><span>Loading campaigns&hellip;</span></div>
+      } @else if (schedules().length === 0) {
+        <div class="list-empty">
+          <strong>No searches yet</strong>
+        </div>
+      } @else {
+        @for (item of orderedSchedules(); track item.id) {
+          <button
+            type="button"
+            class="schedule-item"
+            [class.selected]="isSelected(item.id)"
+            [class.running]="item.status === 'RUNNING'"
+            [class.failed]="item.status === 'FAILED' || item.status === 'BLOCKED' || item.status === 'EXHAUSTED'"
+            [class.terminal]="item.status === 'COMPLETED' || item.status === 'CANCELLED' || item.status === 'EXHAUSTED'"
+            [attr.aria-current]="isSelected(item.id) ? 'true' : null"
+            [attr.aria-label]="statusLabel(item.status) + ': ' + modeLabel(item.mode) + ' in ' + item.locationLabel + '. ' + campaignProgressLabel(item)"
+            (click)="selectSchedule(item.id)"
+          >
+            <span class="item-status">
+              <i aria-hidden="true"></i>
+              {{ statusLabel(item.status) }}
+              <span>&middot; {{ modeLabel(item.mode) }}</span>
+              @if (item.status === 'QUEUED' && item.queuePosition !== null) {
+                <b>#{{ item.queuePosition }}</b>
+              }
+            </span>
+            <strong>{{ item.locationLabel }}</strong>
+            <span class="campaign-progress-line">
+              <b>{{ campaignProgressLabel(item) }}</b>
+              @if (item.continueUntilValidatedLead) {
+                <em>Continues until candidate</em>
+              }
+            </span>
+            <small>{{ campaignSecondaryLabel(item) }}</small>
+            @if (item.lastError) {
+              <span class="item-error">{{ item.lastError }}</span>
+            }
+          </button>
+        }
+      }
+    </div>
+  </aside>
+
+  <section class="search-detail panel">
+    @if (selectedDetail(); as detail) {
+      <header class="detail-header">
+        <div class="detail-status" [class.running]="detail.search.status === 'RUNNING'">
+          <i aria-hidden="true"></i>{{ statusLabel(detail.search.status) }}
+          <span>&middot; {{ modeLabel(detail.search.mode) }}</span>
+        </div>
+        <div class="campaign-controls">
+          <span class="remaining-count">{{ queueContextLabel(detail) }}</span>
+          @if (['QUEUED', 'RUNNING', 'WAITING'].includes(detail.search.status)) {
+            <button
+              type="button"
+              (click)="pauseSchedule(detail.search.id)"
+              [disabled]="mutatingScheduleId() !== null"
+            >Pause</button>
+          }
+          @if (detail.search.status === 'PAUSED') {
+            <button
+              type="button"
+              (click)="resumeSchedule(detail.search.id)"
+              [disabled]="mutatingScheduleId() !== null"
+            >Resume</button>
+          }
+          @if (['QUEUED', 'RUNNING', 'WAITING', 'PAUSED'].includes(detail.search.status)) {
+            <button
+              type="button"
+              class="danger"
+              (click)="cancelSchedule(detail.search.id)"
+              [disabled]="mutatingScheduleId() !== null"
+            >Cancel</button>
+          }
+        </div>
+      </header>
+
+      <section class="campaign-overview" aria-labelledby="campaign-title">
+        <h2 id="campaign-title">{{ detail.search.locationLabel }}</h2>
+        <div class="campaign-stat-strip">
+          <div>
+            <strong>{{ detail.search.terminalSubsearchCount }}/{{ detail.search.targetSubsearchCount }}</strong>
+            <span>Searches</span>
+          </div>
+          <div [class.has-candidate]="detail.search.validatedLeadCount > 0">
+            <strong>{{ detail.search.validatedLeadCount }}</strong>
+            <span>Candidates</span>
+          </div>
+          <div>
+            <strong>&euro;{{ formatCost(detail.search.estimatedCostEur) }} / &euro;{{ formatCost(detail.search.maxCostEur) }}</strong>
+            <span>Spent / cap</span>
+          </div>
+          <p>{{ campaignRemainingLabel(detail.search) }}</p>
+        </div>
+        @if (detail.search.continueUntilValidatedLead) {
+          <p class="extension-note">
+            Continues until a candidate is found, or a search, time, progress, or cost limit is reached.
+          </p>
+        }
+        @if ((detail.search.status === 'RUNNING' || detail.search.status === 'WAITING') && !detail.search.currentSubsearch) {
+          <p class="extension-note">
+            <b>{{ waitingReasonLabel(detail.search.waitingReason) }}.</b>
+            @if (detail.search.retryAt) {
+              Retry {{ formatTime(detail.search.retryAt) }}.
+            }
+          </p>
+        }
+      </section>
+
+      <section class="subsearch-history" aria-labelledby="subsearch-history-title">
+        <div class="subsection-heading compact">
+          <h3 id="subsearch-history-title">Queries</h3>
+          <div class="history-actions">
+            @if (subsearchPinned() && detail.search.currentSubsearch) {
+              <button type="button" class="follow-current-button" (click)="followCurrentSubsearch()">
+                Jump to current <span aria-hidden="true">&rarr;</span>
+              </button>
+            }
+            <span>{{ detail.subsearches.length }}</span>
+          </div>
+        </div>
+
+        @if (detail.subsearches.length > 0) {
+          <div class="subsearch-list" role="list" aria-label="Sub-searches in this campaign">
+            @for (subsearch of orderedSubsearches(detail); track subsearch.id) {
+              <button
+                type="button"
+                class="subsearch-item"
+                [class.selected]="isSelectedSubsearch(subsearch.id)"
+                [class.current]="isCurrentSubsearch(subsearch.id)"
+                [class.failed]="subsearch.status === 'FAILED' || subsearch.status === 'BLOCKED'"
+                [attr.aria-pressed]="isSelectedSubsearch(subsearch.id)"
+                [attr.aria-current]="isCurrentSubsearch(subsearch.id) ? 'step' : null"
+                (click)="selectSubsearch(subsearch.id)"
+              >
+                <span class="subsearch-item-heading">
+                  <b>Search {{ subsearchNumber(subsearch.id) }}</b>
+                  @if (isCurrentSubsearch(subsearch.id)) {
+                    <em>Current</em>
+                  }
+                  <small>{{ statusLabel(subsearch.status) }}</small>
+                </span>
+                <strong>{{ subsearch.query }}</strong>
+                <span class="subsearch-context">
+                  {{ subsearch.businessFamilyLabel }} <i>&middot;</i> {{ subsearch.municipalityLabel }}
+                </span>
+                <span class="subsearch-counts">
+                  {{ subsearch.rawResultCount }} results <i>&middot;</i>
+                  {{ subsearch.auditedCount }} audited <i>&middot;</i>
+                  {{ subsearch.qualifiedCount }} candidates
+                </span>
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="list-empty subsearch-empty">
+            @if (detail.search.status === 'QUEUED') {
+              <strong>Waiting in queue</strong>
+            } @else {
+              <strong>Preparing the first query</strong>
+            }
+          </div>
+        }
+      </section>
+
+      @if (displayedSubsearch(); as subsearch) {
+        <section class="selected-subsearch" aria-labelledby="selected-query-title">
+          <header class="selected-subsearch-heading">
+            <div class="detail-status" [class.running]="subsearch.status === 'RUNNING'">
+              <i aria-hidden="true"></i>{{ statusLabel(subsearch.status) }} &middot; Search {{ subsearchNumber(subsearch.id) }}
+            </div>
+            @if (isCurrentSubsearch(subsearch.id)) {
+              <span class="current-search-badge">Executing now</span>
+            } @else if (subsearchPinned()) {
+              <span class="viewing-past-badge">Viewing selected search</span>
+            }
+          </header>
+
+          <div class="query-block">
+            <span class="card-label">EXACT QUERY</span>
+            <h2 id="selected-query-title">{{ subsearch.query }}</h2>
+            <p>{{ subsearch.businessFamilyLabel }} <span>&middot; {{ subsearch.municipalityLabel }}</span></p>
+          </div>
+
+          @if (activeSubsearchDetail(); as subsearchDetail) {
+            @if (subsearchDetail.activeWork; as work) {
+              <section class="active-work" [class.waiting]="work.taskStatus === 'waiting'">
+                <span>{{ work.taskStatus === 'waiting' ? 'NEXT' : 'NOW' }}</span>
+                <div class="active-work-main">
+                  <strong>{{ work.label }}</strong>
+                  @if (work.businessName) {
+                    <small>
+                      {{ work.businessName }}
+                      @if (work.businessCity) { <i>&middot; {{ work.businessCity }}</i> }
+                    </small>
+                  }
+                  <p>{{ work.detail }}</p>
+                  @if (work.lastError) {
+                    <p class="active-work-error"><b>Last attempt:</b> {{ work.lastError }}</p>
+                  }
+                </div>
+                <div class="active-work-meta">
+                  <small>{{ work.provider }}</small>
+                  @if (work.attempt > 0 && work.maxAttempts > 0) {
+                    <small>Attempt {{ work.attempt }}/{{ work.maxAttempts }}</small>
+                  }
+                  @if (work.taskStatus === 'waiting' && work.availableAt) {
+                    <small>Eligible {{ formatTime(work.availableAt) }}</small>
+                  } @else if (work.activityAt) {
+                    <small>Since {{ formatTime(work.activityAt) }}</small>
+                  }
+                  @if (work.websiteUrl) {
+                    <a [href]="work.websiteUrl" target="_blank" rel="noopener noreferrer">Website</a>
+                  }
+                </div>
+              </section>
+            } @else if (subsearch.status === 'PENDING') {
+              <section class="active-work waiting">
+                <span>WAITING</span>
+                <strong>Waiting for capacity</strong>
+              </section>
+            }
+
+            @if (subsearchDetail.steps.length > 0) {
+              <section class="pipeline-steps" aria-label="Sub-search processing steps">
+                @for (step of subsearchDetail.steps; track step.stage) {
+                  <article
+                    [class.active]="step.running > 0"
+                    [class.waiting]="step.pending > 0 && step.running === 0"
+                    [class.failed]="step.failed > 0"
+                    [class.complete]="step.completed > 0 && step.pending === 0 && step.running === 0 && step.failed === 0"
+                  >
+                    <i aria-hidden="true"></i>
+                    <span>{{ step.label }}</span>
+                    <small>{{ stepActivityLabel(step) }}</small>
+                  </article>
+                }
+              </section>
+            }
+          } @else if (loadingSubsearch()) {
+            <div class="active-work waiting loading-state subsearch-detail-loading">
+              <i></i><strong>Loading exact progress&hellip;</strong>
+            </div>
+          }
+
+          <section class="findings-summary" aria-labelledby="findings-summary-title">
+            <div class="subsection-heading">
+              <h3 id="findings-summary-title">Results</h3>
+              @if (activeSubsearchDetail()?.progress; as progress) {
+                <span>{{ progress.status }}</span>
+              } @else {
+                <span>{{ statusLabel(subsearch.status) }}</span>
+              }
+            </div>
+            <div class="metric-grid subsearch-metrics">
+              <div><strong>{{ subsearch.rawResultCount }}</strong><span>Found</span></div>
+              <div><strong>{{ subsearch.auditedCount }}</strong><span>Audited</span></div>
+              <div><strong>{{ subsearch.qualifiedCount }}</strong><span>Candidates</span></div>
+              <div class="matches"><strong>{{ subsearch.validEmailCount }}</strong><span>Emails</span></div>
+            </div>
+          </section>
+
+          @if (activeSubsearchDetail(); as subsearchDetail) {
+            @if (subsearchDetail.findings.length > 0) {
+              <section class="business-findings" aria-labelledby="business-findings-title">
+                <div class="subsection-heading compact">
+                  <h3 id="business-findings-title">Businesses evaluated</h3>
+                  <span>{{ subsearchDetail.findings.length }}</span>
+                </div>
+                <div class="finding-list">
+                  @for (finding of subsearchDetail.findings; track finding.id) {
+                    <article>
+                      <div class="finding-main">
+                        <div class="finding-title">
+                          <strong>{{ finding.businessName }}</strong>
+                          <span class="finding-outcome" [attr.data-outcome]="finding.outcome">
+                            {{ findingOutcomeLabel(finding.outcome) }}
+                          </span>
+                        </div>
+                        <small>
+                          @if (finding.resultRank !== null) { #{{ finding.resultRank + 1 }} &middot; }
+                          {{ finding.city }} &middot; {{ findingStageLabel(finding.stage) }}
+                          @if (!finding.isFirstDiscovery) { &middot; previous record }
+                          @if (finding.finalScore !== null) { &middot; score {{ finding.finalScore }}/100 }
+                        </small>
+                        @if (finding.address) { <small>{{ finding.address }}</small> }
+                        @if ((finding.failureCode || finding.reason) && (finding.outcome === 'excluded' || finding.outcome === 'needs_research')) {
+                          <p class="finding-reason">
+                            <b>{{ finding.failureCode ? failureCodeLabel(finding.failureCode) : 'Reason' }}.</b>
+                            @if (finding.reason) { {{ finding.reason }} }
+                            @if (finding.retryAt) { <small>Retry {{ formatTime(finding.retryAt) }}</small> }
+                          </p>
+                        } @else if (finding.reason && finding.outcome === 'duplicate') {
+                          <p class="finding-reason">{{ finding.reason }}</p>
+                        }
+                      </div>
+                      <div class="finding-flags">
+                        @if (finding.hasEmail) { <span>Email</span> }
+                        @if (finding.hasPhone) { <span>Phone</span> }
+                        @if (finding.hasContactForm) { <span>Form</span> }
+                        @if (finding.hasSocial) { <span>Social</span> }
+                        @if (finding.websiteUrl) {
+                          <a [href]="finding.websiteUrl" target="_blank" rel="noopener noreferrer">Website</a>
+                        }
+                        @if (finding.mapsUrl) {
+                          <a [href]="finding.mapsUrl" target="_blank" rel="noopener noreferrer">Maps</a>
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            } @else if (subsearch.status === 'RUNNING' || subsearch.status === 'COMPLETED') {
+              <p class="no-findings">No businesses recorded yet.</p>
+            }
+          }
+
+          @if (subsearch.lastError) {
+            <p class="detail-error error-text" role="alert">{{ subsearch.lastError }}</p>
+          }
+          @if (subsearchError()) {
+            <p class="detail-error error-text" role="status">{{ subsearchError() }}</p>
+          }
+        </section>
+      }
+
+      @if (detail.search.lastError) {
+        <p class="detail-error error-text" role="alert">{{ detail.search.lastError }}</p>
+      }
+      @if (detailError()) {
+        <p class="detail-error error-text" role="status">{{ detailError() }}</p>
+      }
+    } @else if (loadingDetail()) {
+      <div class="detail-empty loading-state"><i></i><span>Loading campaign details&hellip;</span></div>
+    } @else if (selectedScheduleId() !== null) {
+      <div class="detail-empty">
+        <strong>Details are unavailable.</strong>
+        <span [class.error-text]="detailError()">{{ detailError() || 'The page will try again automatically.' }}</span>
+      </div>
+    } @else {
+      <div class="detail-empty">
+        <strong>Select a search</strong>
+      </div>
+    }
+  </section>
+</section>

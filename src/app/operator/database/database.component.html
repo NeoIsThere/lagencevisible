@@ -1,0 +1,65 @@
+<header class="database-header">
+  <h1 class="page-title">Database</h1>
+  <button type="button" (click)="refresh()">REFRESH</button>
+</header>
+
+<section class="database-shell panel">
+  <aside aria-label="Database tables">
+    @for (table of tables(); track table.name) {
+      <button
+        type="button"
+        [class.active]="selectedTable() === table.name"
+        [attr.aria-pressed]="selectedTable() === table.name"
+        (click)="selectTable(table.name)"
+      >
+        <span>{{ table.name }}</span><b>{{ table.total }}</b>
+      </button>
+    }
+  </aside>
+
+  <div class="data-area">
+    @if (error() && page()) {
+      <p class="database-error" role="alert">{{ error() }}</p>
+    }
+    @if (page(); as currentPage) {
+      <div class="table-heading">
+        <h2>{{ currentPage.table }}</h2>
+        <p>
+          {{ currentPage.total }} rows ·
+          {{ currentPage.total ? currentPage.offset + 1 : 0 }}–{{ Math.min(currentPage.offset + currentPage.rows.length, currentPage.total) }}
+        </p>
+      </div>
+
+      @if (loading()) {
+        <div class="skeleton table-loading"></div>
+      } @else if (currentPage.rows.length) {
+        <div class="table-scroll">
+          <table>
+            <thead><tr>@for (column of currentPage.columns; track column) { <th>{{ column }}</th> }</tr></thead>
+            <tbody>
+              @for (row of currentPage.rows; track $index) {
+                <tr>
+                  @for (column of currentPage.columns; track column) {
+                    <td [title]="cellValue(row[column])">{{ cellValue(row[column]) }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-table">No rows</div>
+      }
+
+      <div class="pagination">
+        <button type="button" [disabled]="currentPage.offset === 0 || loading()" (click)="previous()">PREVIOUS</button>
+        <span>{{ Math.floor(currentPage.offset / currentPage.limit) + 1 }} / {{ Math.max(1, Math.ceil(currentPage.total / currentPage.limit)) }}</span>
+        <button type="button" [disabled]="currentPage.offset + currentPage.limit >= currentPage.total || loading()" (click)="next()">NEXT</button>
+      </div>
+    } @else if (loading()) {
+      <div class="skeleton table-loading"></div>
+    } @else {
+      <div class="empty-table" [class.error-text]="error()">{{ error() || 'No table available.' }}</div>
+    }
+  </div>
+</section>

@@ -1,0 +1,24 @@
+<header class="history-header">
+  <div><p class="eyebrow">Permanent record</p><h1 class="page-title">Decision history.</h1></div>
+  <p>Sent, rejected, bounced, and unsubscribed addresses stay out of Candidates.</p>
+</header>
+
+@if (loading()) {
+  <div class="skeleton history-loading"></div>
+} @else if (leads().length) {
+  <section class="history-list" aria-label="Lead decision history">
+    @for (lead of leads(); track lead.id) {
+      <article>
+        <span class="status" [class.sent]="lead.status === 'sent'">{{ lead.status }}</span>
+        <div class="identity"><strong>{{ lead.businessName }}</strong><small>{{ lead.city }} · {{ lead.contactEmail || 'No email' }}</small></div>
+        <div class="score"><b>{{ lead.scores.final }}</b><small>FIT</small></div>
+        <time>{{ dateFor(lead) }}</time>
+      </article>
+    }
+  </section>
+} @else {
+  <section class="panel empty-state">
+    <h2>No decisions yet.</h2>
+    <p [class.error-text]="error()">{{ error() || 'Sent and rejected prospects will be recorded here.' }}</p>
+  </section>
+}

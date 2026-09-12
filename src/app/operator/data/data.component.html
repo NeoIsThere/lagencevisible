@@ -1,0 +1,222 @@
+<header class="data-header">
+  <div>
+    <p class="eyebrow">Strategy intelligence</p>
+    <h1 class="page-title">Data.</h1>
+    <p class="page-intro">What the engine has actually observed, and the assumptions it is using when evidence is still sparse.</p>
+  </div>
+</header>
+
+@if (loading()) {
+  <section class="panel loading-panel" aria-live="polite"><i></i><span>Loading the strategy snapshot...</span></section>
+} @else if (error()) {
+  <section class="panel error-panel">
+    <p class="error-text" role="alert">{{ error() }}</p>
+    <button type="button" (click)="load()">Try again</button>
+  </section>
+} @else if (snapshot(); as data) {
+  <section class="evidence-banner" [attr.data-stage]="data.evidenceStage">
+    <div>
+      <span>Evidence status</span>
+      <strong>{{ evidenceTitle(data.evidenceStage) }}</strong>
+    </div>
+    <p>{{ evidenceExplanation(data.evidenceStage) }}</p>
+  </section>
+
+  <section class="summary-grid" aria-label="Observed totals">
+    <article><span>Searches run</span><strong>{{ number(data.totals.counters.searchesRun) }}</strong><small>{{ number(data.totals.counters.successfulSearches) }} reached website audit</small></article>
+    <article><span>Results observed</span><strong>{{ number(data.totals.counters.resultsSeen) }}</strong><small>{{ number(data.totals.counters.autoExcluded) }} excluded automatically</small></article>
+    <article><span>New businesses</span><strong>{{ number(data.totals.counters.uniqueBusinesses) }}</strong><small>{{ percent(data.totals.observedRates.newBusinessRate) }} observed yield</small></article>
+    <article><span>Recorded outcomes</span><strong>{{ number(data.totals.counters.sentLeads) }}</strong><small>{{ number(data.totals.counters.positiveReplies) }} positive replies, {{ number(data.totals.counters.wonLeads) }} won</small></article>
+  </section>
+
+  <section class="economics-grid" aria-label="Search economics">
+    <article><span>Committed provider spend</span><strong>{{ euro(data.economics.committedEur) }}</strong><small>{{ euro(data.economics.attributedEur) }} linked to a strategy run</small></article>
+    <article><span>Attribution coverage</span><strong>{{ percent(data.economics.attributionCoverage) }}</strong><small>{{ euro(data.economics.unattributedEur) }} remains unlinked</small></article>
+    <article><span>Cost per audited lead</span><strong>{{ euro(data.economics.costPerAuditedLeadEur) }}</strong><small>Paid evidence review reached</small></article>
+    <article><span>Cost per verified email</span><strong>{{ euro(data.economics.costPerValidatedEmailEur) }}</strong><small>Public-source email validated</small></article>
+    <article><span>Cost per candidate</span><strong>{{ euro(data.economics.costPerQueuedLeadEur) }}</strong><small>Ready for a decision</small></article>
+  </section>
+
+  <nav class="data-switcher" aria-label="Data view">
+    <button type="button" [class.active]="view() === 'observed'" [attr.aria-pressed]="view() === 'observed'" (click)="setView('observed')">Observed</button>
+    <button type="button" [class.active]="view() === 'assumptions'" [attr.aria-pressed]="view() === 'assumptions'" (click)="setView('assumptions')">Assumptions</button>
+  </nav>
+
+  @if (view() === 'observed') {
+    <section class="data-section" aria-labelledby="opportunity-learning-title">
+      <div class="section-title">
+        <div><span>LEARNED DATA</span><h2 id="opportunity-learning-title">By opportunity type</h2></div>
+        <p>Rates below are raw observations. “Not measured” means there is no valid denominator yet.</p>
+      </div>
+
+      <div class="opportunity-grid">
+        @for (opportunity of data.byOpportunity; track opportunity.mode) {
+          <article class="opportunity-card panel">
+            <header>
+              <div><span class="mode-dot"></span><h3>{{ opportunity.modeLabel }}</h3></div>
+              <small>{{ testedLabel(opportunity) }}</small>
+            </header>
+            <div class="compact-metrics">
+              <div><span>Searches</span><strong>{{ number(opportunity.counters.searchesRun) }}</strong></div>
+              <div><span>Results</span><strong>{{ number(opportunity.counters.resultsSeen) }}</strong></div>
+              <div><span>New</span><strong>{{ number(opportunity.counters.uniqueBusinesses) }}</strong></div>
+              <div><span>Qualified</span><strong>{{ number(opportunity.counters.qualifiedLeads) }}</strong></div>
+            </div>
+            <div class="rate-row">
+              <span>New-business rate <strong>{{ percent(opportunity.observedRates.newBusinessRate) }}</strong></span>
+              <span>Qualification rate <strong>{{ percent(opportunity.observedRates.qualifiedLeadRate) }}</strong></span>
+            </div>
+            <details>
+              <summary>Business-family evidence <span>{{ opportunity.families.length }}</span></summary>
+              <div class="learning-table family-table">
+                <div class="table-head"><span>Family</span><span>Searches</span><span>Results</span><span>New rate</span></div>
+                @for (family of opportunity.families; track family.familyId) {
+                  <div><strong>{{ family.familyLabel }}</strong><span>{{ family.counters.searchesRun }}</span><span>{{ family.counters.resultsSeen }}</span><span>{{ percent(family.observedRates.newBusinessRate) }}</span></div>
+                }
+              </div>
+            </details>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="data-section locations-section" aria-labelledby="location-learning-title">
+      <div class="section-title">
+        <div><span>LEARNED DATA</span><h2 id="location-learning-title">By location</h2></div>
+        <p>Each location stays split by opportunity type, because their evidence and rules differ.</p>
+      </div>
+      <div class="location-list">
+        @for (location of data.byLocation; track location.clusterId) {
+          <details class="location-learning panel">
+            <summary>
+              <div><strong>{{ location.clusterLabel }}</strong><small>{{ location.region }} · {{ testedLabel(location) }}</small></div>
+              <div class="location-total"><strong>{{ number(location.counters.resultsSeen) }}</strong><span>results</span></div>
+            </summary>
+            <div class="location-opportunities">
+              @for (opportunity of location.opportunities; track opportunity.mode) {
+                <article>
+                  <header><h3>{{ opportunity.modeLabel }}</h3><small>{{ testedLabel(opportunity) }}</small></header>
+                  <div class="mini-funnel">
+                    <span><b>{{ opportunity.counters.searchesRun }}</b> searches</span>
+                    <span><b>{{ opportunity.counters.resultsSeen }}</b> results</span>
+                    <span><b>{{ opportunity.counters.uniqueBusinesses }}</b> new</span>
+                    <span><b>{{ percent(opportunity.observedRates.newBusinessRate) }}</b> yield</span>
+                  </div>
+                  <div class="municipality-list">
+                    @for (municipality of opportunity.municipalities; track municipality.municipalityId) {
+                      <div><span>{{ municipality.municipalityLabel }}</span><small>{{ municipality.counters.searchesRun }} searches · {{ municipality.counters.resultsSeen }} results · {{ percent(municipality.observedRates.newBusinessRate) }} yield</small></div>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </details>
+        }
+      </div>
+    </section>
+  } @else {
+    <section class="data-section" aria-labelledby="opportunity-rules-title">
+      <div class="section-title assumed">
+        <div><span>ACTIVE ASSUMPTIONS</span><h2 id="opportunity-rules-title">Opportunity rules</h2></div>
+        <p>These are configured decision rules, not conclusions learned from outcomes.</p>
+      </div>
+      <div class="opportunity-grid assumption-grid">
+        @for (mode of data.assumptions.modes; track mode.id) {
+          <article class="assumption-card panel">
+            <header><span>OPPORTUNITY</span><h3>{{ mode.label }}</h3></header>
+            <h4>Website gate</h4>
+            <dl>@for (rule of ruleEntries(mode.websiteGate); track rule.label) { <div><dt>{{ rule.label }}</dt><dd>{{ rule.value }}</dd></div> }</dl>
+            <h4>Qualification gate</h4>
+            <dl>@for (rule of ruleEntries(mode.qualificationGates); track rule.label) { <div><dt>{{ rule.label }}</dt><dd>{{ rule.value }}</dd></div> }</dl>
+          </article>
+        }
+      </div>
+      <div class="lead-type-rules">
+        <div class="subheading-row">
+          <div><h3>Lead-type defaults</h3><small>Default communication language: {{ data.assumptions.defaultLanguage }}</small></div>
+          <p>Family-specific evaluation starts with these commercial evidence thresholds.</p>
+        </div>
+        <div class="lead-type-grid">
+          @for (leadType of data.assumptions.leadTypes; track leadType.id) {
+            <article class="panel">
+              <h4>{{ leadType.id }}</h4>
+              <dl>@for (rule of ruleEntries(leadType.rules); track rule.label) { <div><dt>{{ rule.label }}</dt><dd>{{ rule.value }}</dd></div> }</dl>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="data-section" aria-labelledby="location-rules-title">
+      <div class="section-title assumed">
+        <div><span>ACTIVE ASSUMPTIONS</span><h2 id="location-rules-title">Location priorities</h2></div>
+        <p>Priorities shape where the scheduler explores before enough outcome evidence exists.</p>
+      </div>
+      <div class="assumption-list">
+        @for (location of data.assumptions.locations; track location.id) {
+          <details class="assumption-detail panel">
+            <summary>
+              <div><strong>{{ location.label }}</strong><small>{{ location.region }} · {{ location.municipalities.length }} municipalities</small></div>
+              <div class="priority-pills"><span>Website rescue {{ location.recommendedModePriority.POOR_WEBSITE }}</span></div>
+            </summary>
+            <div class="municipality-priorities">
+              @for (municipality of location.municipalities; track municipality.id) {
+                <span>{{ municipality.label }} <b>{{ municipality.priority }}</b></span>
+              }
+            </div>
+            <h4>Business-family priorities</h4>
+            <div class="family-priority-list">
+              @for (family of location.familyPriorities; track family.familyId) {
+                <span>{{ family.familyLabel }} <b>{{ family.priorities.POOR_WEBSITE }}</b></span>
+              }
+            </div>
+            @if (location.compatibilityOverrides.length) {
+              <h4>Compatibility overrides</h4>
+              <div class="override-list">
+                @for (override of location.compatibilityOverrides; track override.municipalityId + override.familyId) {
+                  <span>{{ override.municipalityLabel }} / {{ override.familyLabel }} <b>{{ override.score }}</b></span>
+                }
+              </div>
+            }
+          </details>
+        }
+      </div>
+    </section>
+
+    <section class="data-section two-column-assumptions" aria-label="Business and learning assumptions">
+      <div>
+        <div class="section-title assumed compact"><div><span>ACTIVE ASSUMPTIONS</span><h2>Business families</h2></div></div>
+        <div class="assumption-list">
+          @for (family of data.assumptions.businessFamilies; track family.id) {
+            <details class="assumption-detail family-assumption panel">
+              <summary><div><strong>{{ family.label }}</strong><small>{{ family.leadType }} · {{ family.keywords.length }} search terms @if (family.regulatedSector) { · regulated sector }</small></div></summary>
+              <h4>Search terms</h4><div class="tag-list">@for (keyword of family.keywords; track keyword.query) { <span>{{ keyword.query }} <b>{{ keyword.priority }}</b></span> }</div>
+              <h4>Positive signals</h4><ul>@for (signal of family.positiveSignals; track signal) { <li>{{ signal }}</li> }</ul>
+              <h4>Negative signals</h4><ul>@for (signal of family.negativeSignals; track signal) { <li>{{ signal }}</li> }</ul>
+              <h4>Poor-website weaknesses</h4><ul>@for (weakness of family.poorWebsiteWeaknesses; track weakness) { <li>{{ weakness }}</li> }</ul>
+            </details>
+          }
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title assumed compact"><div><span>ACTIVE ASSUMPTIONS</span><h2>Learning model</h2></div></div>
+        <div class="assumption-list">
+          @for (section of learningSections(data.assumptions.learningModel); track section.label) {
+            <details class="assumption-detail panel">
+              <summary><strong>{{ section.label }}</strong></summary>
+              <dl>@for (entry of section.entries; track entry.label) { <div><dt>{{ entry.label }}</dt><dd>{{ entry.value }}</dd></div> }</dl>
+            </details>
+          }
+          <details class="assumption-detail panel">
+            <summary><strong>Global exclusions</strong></summary>
+            <h4>Name or category contains</h4><div class="tag-list">@for (value of data.assumptions.globalExclusions.nameOrCategoryContains; track value) { <span>{{ value }}</span> }</div>
+            <h4>Statuses</h4><div class="tag-list">@for (value of data.assumptions.globalExclusions.statuses; track value) { <span>{{ value }}</span> }</div>
+          </details>
+        </div>
+      </div>
+    </section>
+  }
+
+  <footer class="snapshot-note">Active strategy version {{ data.strategyVersion }} · Snapshot {{ data.generatedAt | date:'medium' }} · Historical versions remain preserved in MySQL</footer>
+}

@@ -1,0 +1,24 @@
+:host { display: block; }
+
+.advanced-nav {
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 4px;
+  margin: clamp(-72px, -5vw, -32px) 0 clamp(30px, 4vw, 52px);
+  overflow-x: auto;
+}
+
+.advanced-nav a {
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 650;
+  padding: 18px 22px 14px;
+  text-decoration: none;
+}
+
+.advanced-nav a:first-child { padding-left: 0; }
+.advanced-nav a:hover,
+.advanced-nav a.active { color: var(--ink); }
+.advanced-nav a.active { border-bottom-color: var(--accent); }

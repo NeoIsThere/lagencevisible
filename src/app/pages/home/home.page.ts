@@ -19,7 +19,7 @@ const FAQ_FR: readonly (readonly [string, string])[] = [
   ['Proposez-vous des sites en anglais ?', 'Oui. Nous pouvons créer des sites en français et en anglais.'],
   ['Le site m’appartiendra-t-il ?', 'Oui. Les conditions de propriété, d’accès et de transfert sont clairement définies avant de commencer.'],
   ['Pouvez-vous modifier un site existant ?', 'Oui. Nous pouvons analyser sa structure, corriger ses contenus et améliorer son affichage ou son utilisation.'],
-  ['Travaillez-vous uniquement à Nice ?', 'Non. Nous sommes basés à Nice et pouvons travailler avec des entreprises partout en France.'],
+  ['Travaillez-vous à distance ?', 'Oui. Nous pouvons organiser et réaliser votre projet entièrement à distance.'],
   ['Comment vous contacter ?', 'Vous pouvez nous présenter votre site ou nous envoyer directement un message depuis le formulaire de contact.'],
 ];
 
@@ -36,7 +36,7 @@ const FAQ_EN: readonly (readonly [string, string])[] = [
   ['Do you create English-language websites?', 'Yes. We can create websites in French and English.'],
   ['Will I own the website?', 'Yes. Ownership, access and transfer terms are clearly defined before we begin.'],
   ['Can you modify an existing website?', 'Yes. We can analyse its structure, correct its content and improve its appearance or usability.'],
-  ['Do you only work in Nice?', 'No. We are based in Nice and can work with businesses throughout France.'],
+  ['Do you work remotely?', 'Yes. We can organise and deliver your project entirely remotely.'],
   ['How can I contact you?', 'You can tell us about your website or send us a message directly through the contact form.'],
 ];
 
@@ -70,12 +70,6 @@ export class HomePage {
             url: `${baseUrl}/`,
             email: SITE_CONFIG.email,
             inLanguage: this.i18n.language(),
-            areaServed: this.i18n.t('France', 'France'),
-            address: {
-              '@type': 'PostalAddress',
-              addressLocality: 'Nice',
-              addressCountry: 'FR',
-            },
           },
           { '@type': 'FAQPage', inLanguage: this.i18n.language(), mainEntity: this.faqs().map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })) },
         ],

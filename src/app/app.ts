@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, effect, inject, PLATFORM_ID } from '@angular/core';
+import { Component, effect, inject, PLATFORM_ID, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { FooterComponent } from './shared/footer/footer.component';
@@ -18,6 +18,7 @@ export class App {
   private readonly seo = inject(SeoService);
   readonly i18n = inject(LanguageService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  readonly operatorArea = signal(this.router.url === '/operator' || this.router.url.startsWith('/operator/'));
 
   constructor() {
     effect(() => {
@@ -28,6 +29,7 @@ export class App {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
+        this.operatorArea.set(this.router.url === '/operator' || this.router.url.startsWith('/operator/'));
         this.updateRouteSeo();
         if (this.isBrowser) window.scrollTo({ top: 0, behavior: 'auto' });
       });

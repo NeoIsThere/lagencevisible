@@ -1,0 +1,155 @@
+<header class="integrations-header">
+  <div>
+    <h1 class="page-title">Integration</h1>
+    <p class="page-intro">Service status, limits and recent activity.</p>
+  </div>
+  <div class="refresh-controls">
+    <div>
+      <button
+        class="auto-refresh"
+        type="button"
+        [class.active]="autoRefresh()"
+        [attr.aria-pressed]="autoRefresh()"
+        (click)="toggleAutoRefresh()"
+      >
+        <i></i>{{ autoRefresh() ? 'AUTO ON' : 'AUTO OFF' }}
+      </button>
+      <button class="refresh-button" type="button" [disabled]="refreshing()" (click)="refresh()">
+        {{ refreshing() ? 'REFRESHING…' : 'REFRESH' }}
+      </button>
+    </div>
+    <small>{{ formatTimestamp(lastRefreshedAt(), 'Not loaded') }}</small>
+  </div>
+</header>
+
+@if (dashboard(); as data) {
+  <section class="summary-grid" aria-label="Integration summary">
+    <article><span>Services</span><b>{{ data.summary.total }}</b></article>
+    <article class="ready"><span>Ready</span><b>{{ data.summary.ready }}</b></article>
+    <article class="attention"><span>Attention</span><b>{{ data.summary.attention }}</b></article>
+    <article class="disabled"><span>Disabled</span><b>{{ data.summary.disabled }}</b></article>
+  </section>
+}
+
+<aside class="secret-note">
+  <span>Secrets are masked</span>
+  <strong>{{ configuredCount() }} configured</strong>
+</aside>
+
+@if (error()) {
+  <div class="error-banner" role="alert">{{ error() }}</div>
+}
+
+@if (loading()) {
+  <section class="integration-grid" aria-label="Loading integrations">
+    <div class="skeleton integration-skeleton"></div>
+    <div class="skeleton integration-skeleton"></div>
+  </section>
+} @else if (dashboard(); as data) {
+  @if (data.integrations.length) {
+    <section class="integration-grid" aria-label="External integration status">
+      @for (integration of data.integrations; track integration.id) {
+        <article class="integration-card">
+          <header class="card-header">
+            <h2>{{ integration.name }}</h2>
+            <div class="badges">
+              <span class="state-badge" [class]="'state-badge ' + stateClass(integration)">
+                <i></i>{{ statusLabel(integration.status) }}
+              </span>
+              <span class="readiness-badge" [class.ready]="integration.ready">
+                {{ integration.ready ? 'Ready' : 'Not ready' }}
+              </span>
+            </div>
+          </header>
+
+          <p class="purpose">{{ integration.purpose }}</p>
+          <div class="configuration-state" [class.configured]="integration.configured">
+            <i></i>{{ integration.configured ? 'Configured' : 'Not configured' }}
+          </div>
+
+          @if (integration.reason) {
+            <div class="service-note" [class.issue]="stateClass(integration) === 'attention' || stateClass(integration) === 'unavailable'">
+              <p>{{ integration.reason }}</p>
+            </div>
+          }
+
+          @if (integration.activity.lastError) {
+            <div class="issue-note">
+              <b>Latest error</b>
+              <p>{{ integration.activity.lastError }}</p>
+              <span>{{ formatTimestamp(integration.activity.lastErrorAt, 'Time unavailable') }}</span>
+            </div>
+          }
+
+          <details class="integration-details">
+            <summary>Details</summary>
+            <div class="record-grid">
+              <section class="record-section configuration-section">
+              <div class="section-heading"><span>Configuration</span></div>
+              @let configurationEntries = recordEntries(integration.configuration, true);
+              @if (configurationEntries.length) {
+                <div class="record-list">
+                  @for (entry of configurationEntries; track entry.key) {
+                    <div class="record-row" [title]="entry.title"><span>{{ entry.label }}</span><b>{{ entry.value }}</b></div>
+                  }
+                </div>
+              } @else {
+                <p class="no-data">No data</p>
+              }
+              </section>
+
+              <section class="record-section usage-section">
+              <div class="section-heading"><span>Usage</span></div>
+              @let usageEntries = recordEntries(integration.usage, false, true);
+              @if (usageEntries.length) {
+                <div class="metric-list">
+                  @for (entry of usageEntries; track entry.key) {
+                    <div class="metric-row" [title]="entry.title">
+                      <div><span>{{ entry.label }}</span><b>{{ entry.value }}</b></div>
+                      @if (entry.progress !== null) {
+                        <i class="progress-track"><em [style.width.%]="entry.progress"></em></i>
+                      }
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="no-data">No usage</p>
+              }
+              </section>
+
+              <section class="record-section counters-section">
+              <div class="section-heading"><span>Counters</span></div>
+              @let counterEntries = recordEntries(integration.counters);
+              @if (counterEntries.length) {
+                <div class="counter-list">
+                  @for (entry of counterEntries; track entry.key) {
+                    <div [title]="entry.title"><b>{{ entry.value }}</b><span>{{ entry.label }}</span></div>
+                  }
+                </div>
+              } @else {
+                <p class="no-data">No counters</p>
+              }
+              </section>
+            </div>
+
+            <section class="activity-section" aria-label="Recent integration activity">
+              <div class="section-heading"><span>Recent activity</span></div>
+              <div class="activity-grid">
+                <div><span>Activity</span><b>{{ formatTimestamp(integration.activity.lastActivityAt) }}</b></div>
+                <div class="success"><span>Success</span><b>{{ formatTimestamp(integration.activity.lastSuccessAt, 'None') }}</b></div>
+                <div class="error"><span>Error</span><b>{{ formatTimestamp(integration.activity.lastErrorAt, 'None') }}</b></div>
+              </div>
+            </section>
+          </details>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="panel empty-state"><h2>No integrations</h2></section>
+  }
+} @else {
+  <section class="panel empty-state">
+    <h2>Status unavailable</h2>
+    <p class="error-text">{{ error() || 'No integration snapshot received.' }}</p>
+  </section>
+}

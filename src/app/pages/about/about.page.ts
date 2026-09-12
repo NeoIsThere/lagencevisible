@@ -30,7 +30,6 @@ export class AboutPage {
           name: SITE_CONFIG.brand,
           url: `${baseUrl}/`,
           description,
-          areaServed: { '@type': 'Country', name: this.i18n.t('France', 'France') },
           knowsAbout: [
             this.i18n.t('Création de sites web', 'Website creation'),
             this.i18n.t('Analyse de sites web', 'Website analysis'),

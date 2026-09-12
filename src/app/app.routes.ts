@@ -2,10 +2,21 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () => import('./operator/login/login.component').then((m) => m.LoginComponent),
+    data: { robots: 'noindex, nofollow' },
+  },
+  {
+    path: 'operator',
+    loadComponent: () => import('./operator/operator-shell.component').then((m) => m.OperatorShellComponent),
+    loadChildren: () => import('./operator/operator.routes').then((m) => m.operatorRoutes),
+    data: { robots: 'noindex, nofollow' },
+  },
+  {
     path: '',
     loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage),
     data: {
-      title: { fr: 'Création et amélioration de sites web à Nice — L’agence visible', en: 'Website creation and improvement in Nice — L’agence visible' },
+      title: { fr: 'Création et amélioration de sites web — L’agence visible', en: 'Website creation and improvement — L’agence visible' },
       description: {
         fr: "Nous créons des sites web qui permettent aux entreprises d’être trouvées sur Google, comprises par les assistants IA et contactées par leurs futurs clients.",
         en: 'We create websites that help businesses appear in Google results, make sense to AI assistants and turn visits into enquiries.',
@@ -38,7 +49,7 @@ export const routes: Routes = [
     path: 'a-propos',
     loadComponent: () => import('./pages/about/about.page').then((m) => m.AboutPage),
     data: {
-      title: { fr: 'Qui sommes-nous ? | L’agence visible, Nice', en: 'About us | L’agence visible, Nice' },
+      title: { fr: 'Qui sommes-nous ? | L’agence visible', en: 'About us | L’agence visible' },
       description: {
         fr: 'Des ingénieurs expérimentés qui créent et améliorent des sites web clairs, efficaces et attractifs.',
         en: 'Experienced engineers creating and improving clear, effective and engaging websites.',

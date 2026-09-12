@@ -4,4 +4,5 @@
  */
 window.__SITE_CONFIG__ = {
   CONTACT_FORM_ENDPOINT: 'https://api.lagencevisible.com/mail',
+  OPERATOR_API_ORIGIN: 'https://api.lagencevisible.com',
 };

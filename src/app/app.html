@@ -1,6 +1,10 @@
-<a class="skip-link" href="#contenu">{{ i18n.t('Aller au contenu', 'Skip to content') }}</a>
-<app-header />
+@if (!operatorArea()) {
+  <a class="skip-link" href="#contenu">{{ i18n.t('Aller au contenu', 'Skip to content') }}</a>
+  <app-header />
+}
 <main id="contenu" tabindex="-1">
   <router-outlet />
 </main>
-<app-footer />
+@if (!operatorArea()) {
+  <app-footer />
+}

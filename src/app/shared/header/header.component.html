@@ -12,6 +12,18 @@
       <a class="button button-small" routerLink="/contact">{{ i18n.t('Prendre contact', 'Get in touch') }}</a>
     </nav>
     <div class="header-tools">
+      <a
+        class="login-link"
+        routerLink="/login"
+        routerLinkActive="active"
+        [attr.aria-label]="i18n.t('Connexion à l’espace privé', 'Log in to the private area')"
+        [attr.title]="i18n.t('Connexion', 'Log in')"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.5"></circle>
+          <path d="M5.5 20c.4-4 2.5-6 6.5-6s6.1 2 6.5 6"></path>
+        </svg>
+      </a>
       <button
         class="language-switch"
         type="button"
