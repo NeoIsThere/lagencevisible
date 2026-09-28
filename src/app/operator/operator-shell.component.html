@@ -15,7 +15,10 @@
       <a routerLink="/operator/advanced" routerLinkActive="active" ariaCurrentWhenActive="page">Advanced</a>
     </nav>
 
-    <button class="logout-button" type="button" (click)="logout()" [disabled]="loggingOut()">{{ loggingOut() ? "Logging out…" : "Log out" }}</button>
+    <div class="topbar-actions">
+      <app-logs-dialog />
+      <button class="logout-button" type="button" (click)="logout()" [disabled]="loggingOut()">{{ loggingOut() ? "Logging out…" : "Log out" }}</button>
+    </div>
   </header>
   }
   @if (logoutError()) { <p class="error-text" role="alert">{{ logoutError() }}</p> }

@@ -1,3 +1,18 @@
+export interface ApplicationLogEntry {
+  id: string;
+  service: "api" | "worker";
+  level: "info" | "warn" | "error";
+  message: string;
+  createdAt: string;
+}
+
+export interface ApplicationLogsResponse {
+  entries: ApplicationLogEntry[];
+  hasMore: boolean;
+  retentionDays: number;
+  maxStoredEntries: number;
+}
+
 export interface WebsiteProblem {
   problem: string;
   evidence: string;

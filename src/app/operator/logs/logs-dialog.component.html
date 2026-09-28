@@ -1,0 +1,41 @@
+<button class="logs-button" type="button" aria-haspopup="dialog" (click)="open()">Logs</button>
+
+<dialog #dialog aria-labelledby="logs-title" aria-describedby="logs-description" (close)="stop()">
+  <div class="dialog-content">
+    <header class="dialog-header">
+      <div><span class="eyebrow">APPLICATION ACTIVITY</span><h2 id="logs-title">Logs</h2><p id="logs-description">API and worker activity, including campaign errors.</p></div>
+      <button class="close-button" type="button" (click)="close()" aria-label="Close logs" autofocus>×</button>
+    </header>
+
+    <form class="filters" (submit)="search($event)">
+      <label>Service<select aria-label="Service" [value]="service()" (change)="filter('service', $any($event.target).value)"><option value="all">All services</option><option value="worker">Worker</option><option value="api">API</option></select></label>
+      <label>Level<select aria-label="Level" [value]="level()" (change)="filter('level', $any($event.target).value)"><option value="all">All levels</option><option value="error">Errors</option><option value="warn">Warnings</option><option value="info">Info</option></select></label>
+      <label class="search-field">Search messages<input type="search" placeholder="DataForSEO, campaign, job…" maxlength="160" [value]="query()" (input)="query.set($any($event.target).value)"></label>
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="toolbar">
+      <label class="live-toggle"><input type="checkbox" [checked]="live()" (change)="live.set($any($event.target).checked)"> Auto-refresh · 5s</label>
+      <span class="update-status" role="status">@if (loading()) { Refreshing… } @else if (updatedAt()) { Updated {{ updatedAt() | date:'HH:mm:ss' }} }</span>
+      <button type="button" (click)="copy()" [disabled]="!result()?.entries?.length">Copy logs</button>
+      <button type="button" (click)="refresh()" [disabled]="loading()">Refresh</button>
+    </div>
+    @if (error()) { <p class="error-message" role="alert">{{ error() }}</p> }
+    @if (copyStatus()) { <p class="copy-status" role="status">{{ copyStatus() }}</p> }
+
+    <section class="log-output" aria-label="Log entries, newest first" [attr.aria-busy]="loading()" tabindex="0">
+      @for (entry of result()?.entries ?? []; track entry.id) {
+        <article class="log-entry" [attr.data-level]="entry.level">
+          <div class="log-meta"><time [attr.datetime]="entry.createdAt" [title]="entry.createdAt">{{ entry.createdAt | date:'MMM d, HH:mm:ss' }}</time><span class="service">{{ entry.service }}</span><span class="level">{{ entry.level }}</span></div>
+          <pre>{{ entry.message }}</pre>
+        </article>
+      } @empty {
+        <div class="empty-state">@if (loading()) { Loading logs… } @else if (error()) { Logs could not be loaded. } @else { No logs match these filters. New activity will appear here after the backend starts recording logs. }</div>
+      }
+    </section>
+    <footer>
+      <span>{{ result()?.entries?.length ?? 0 }} entries · Newest first@if (result()?.hasMore) { · Showing the latest 300 matches; narrow the filters for more detail. }</span>
+      <span>Up to {{ result()?.retentionDays ?? 7 }} days / {{ result()?.maxStoredEntries ?? 20000 }} entries retained. Recording starts with this update.</span>
+    </footer>
+  </div>
+</dialog>

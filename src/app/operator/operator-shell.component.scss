@@ -77,6 +77,7 @@
 
 .logout-button { background: transparent; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); cursor: pointer; font-size: 12px; justify-self: end; padding: 10px 14px; }
 .logout-button:disabled { cursor: default; opacity: .6; }
+.topbar-actions { align-items: center; display: flex; gap: 8px; justify-self: end; }
 
 main { margin: 0 auto; max-width: 1500px; padding: clamp(32px, 5vw, 72px) clamp(20px, 5vw, 76px) 72px; }
 
@@ -90,5 +91,5 @@ main { margin: 0 auto; max-width: 1500px; padding: clamp(32px, 5vw, 72px) clamp(
     justify-content: center;
     width: 100%;
   }
-  .logout-button { align-self: start; margin-top: 7px; }
+  .topbar-actions { align-self: start; margin-top: 7px; }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import type {
+  ApplicationLogsResponse,
   DatabasePage,
   DatabaseTableSummary,
   EngineStatus,
@@ -127,5 +128,9 @@ export class ApiService {
 
   environment() {
     return this.http.get<{ variables: EnvironmentVariable[] }>("/api/operator/environment");
+  }
+
+  applicationLogs(filters: { service: string; level: string; q: string }) {
+    return this.http.get<ApplicationLogsResponse>("/api/operator/logs", { params: { ...filters, limit: 300 } });
   }
 }
