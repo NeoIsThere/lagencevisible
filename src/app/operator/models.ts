@@ -133,6 +133,7 @@ export interface ScheduledSearchStep {
 }
 
 export interface ScheduledSearchFinding {
+  selection?: "selected" | "not_selected" | "pending";
   id: string;
   businessName: string;
   city: string;
@@ -419,6 +420,34 @@ export interface Lead {
   websiteProblems: WebsiteProblem[];
   commercialEstimate: CommercialEstimate | null;
   deliveryApproach: DeliveryApproach | null;
+  ranking?: {
+    version: number;
+    activity: number;
+    ability: number;
+    digitalIntent: number;
+    purchaseFit: number;
+    reachability: number;
+    need: number;
+    score: number;
+    tier: "priority" | "plausible" | "exploratory";
+    unknownDimensions: string[];
+    acceptedSignalKinds: string[];
+    acceptedSignals: Array<{ kind: string; evidence: string; sourceUrl: string; confidence: number; observedAt: string | null }>;
+    ignoredSignalReasons: string[];
+    hardExclusion: string | null;
+  } | null;
+  prospectEvidence?: {
+    signals: Array<{ kind: string; evidence: string; sourceUrl: string; confidence: number; observedAt: string | null }>;
+    fixedScope: {
+      status: "plausible" | "needs_discovery" | "no_viable_offer";
+      confidence: number;
+      problemIndexes: number[];
+      deliverables: string[];
+      exclusions: string[];
+      acceptanceCriteria: string[];
+      reason: string;
+    };
+  } | null;
   aiArtifacts: AiArtifact[];
   email: { subject: string | null; body: string | null };
   status: string;

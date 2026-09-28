@@ -77,6 +77,16 @@
 
             <p class="qualification">{{ qualificationSummary(current.qualificationReason) }}</p>
 
+            @if (current.prospectEvidence?.fixedScope; as scope) {
+              <section class="detail-section">
+                <h3>Fixed-scope opportunity</h3>
+                <ul>@for (item of scope.deliverables; track $index) { <li>{{ item }}</li> }</ul>
+                @if (scope.status === 'needs_discovery') {
+                  <p class="muted-copy">Confirm scope and access with the business before quoting.</p>
+                }
+              </section>
+            }
+
             <details class="email-card">
               <summary>
                 <span>Email draft</span>
@@ -92,10 +102,42 @@
               }
 
               <section class="score-grid" aria-label="Qualification scores">
+                @if (current.ranking) {
+                <div><span>Purchase fit</span><strong>{{ rankingValue(current, 'purchaseFit') }}</strong></div>
+                <div><span>Digital intent</span><strong>{{ rankingValue(current, 'digitalIntent') }}</strong></div>
+                <div><span>Owner reachability</span><strong>{{ rankingValue(current, 'reachability') }}</strong></div>
+                <div><span>Ability to pay</span><strong>{{ rankingValue(current, 'ability') }}</strong></div>
+                <div><span>Website need</span><strong>{{ rankingValue(current, 'need') }}</strong></div>
+                <div><span>Business activity</span><strong>{{ rankingValue(current, 'activity') }}</strong></div>
+                } @else {
                 <div><span>Ability to pay</span><strong>{{ current.scores.abilityToPay }}</strong></div>
                 <div><span>Website need</span><strong>{{ current.scores.websiteNeed }}</strong></div>
                 <div><span>Contactability</span><strong>{{ current.scores.contactability }}</strong></div>
+                }
               </section>
+
+              @if (current.ranking; as ranking) {
+                <p class="muted-copy">{{ ranking.tier }} review priority. Scores order candidates; they are not conversion probabilities. Unknown means evidence is missing.</p>
+                @if (current.prospectEvidence; as evidence) {
+                  <section class="detail-section">
+                    <h3>Commercial evidence</h3>
+                    @for (item of ranking.acceptedSignals; track $index) {
+                        <p><strong>{{ signalLabel(item.kind) }}:</strong> {{ item.evidence }} <a [href]="item.sourceUrl" target="_blank" rel="noreferrer">Source</a></p>
+                    }
+                    @if (!ranking.acceptedSignalKinds.length) {
+                      <p class="muted-copy">No additional commercial signals are supported by the collected sources yet.</p>
+                    }
+                  </section>
+                  <section class="detail-section">
+                    <h3>Scope boundaries</h3>
+                    <p>{{ evidence.fixedScope.reason }}</p>
+                    <h4>Excluded work</h4>
+                    <ul>@for (item of evidence.fixedScope.exclusions; track $index) { <li>{{ item }}</li> }</ul>
+                    <h4>Acceptance criteria</h4>
+                    <ul>@for (item of evidence.fixedScope.acceptanceCriteria; track $index) { <li>{{ item }}</li> }</ul>
+                  </section>
+                }
+              }
 
               @if (current.websiteProblems.length) {
                 <section class="detail-section">

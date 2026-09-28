@@ -307,6 +307,8 @@ details > summary::-webkit-details-marker { display: none; }
 }
 
 .score-grid div:last-child { border-right: 0; }
+.score-grid div:nth-child(3n) { border-right: 0; }
+.score-grid div:nth-child(n + 4) { padding-top: 12px; }
 
 .score-grid span { color: var(--muted); display: block; font-size: 10px; }
 

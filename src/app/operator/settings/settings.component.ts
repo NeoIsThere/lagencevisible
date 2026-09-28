@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, catchError, map, merge, Observable, of, retry, Subject, switchMap, tap, timer } from "rxjs";
 import { ApiService } from "../api.service";
@@ -10,13 +10,11 @@ import type {
   ScheduledSearchListResponse,
   ScheduleSearchResponse,
   ScheduledSearchStatus,
-  ScheduledSearchStep,
   ScheduledSearchSummary,
   ScheduledSubsearchDetail,
   ScheduledSubsearchStatus,
   ScheduledSubsearchSummary,
   StrategyCatalog,
-  StrategyMode,
 } from "../models";
 
 interface ScheduleListPollResult {
@@ -77,6 +75,18 @@ export class SettingsComponent {
   readonly detailError = signal<string | null>(null);
   readonly subsearchError = signal<string | null>(null);
   readonly scheduleMessage = signal<string | null>(null);
+  readonly businessFilter = signal<"all" | "not_selected" | "selected" | "pending">("all");
+  readonly businessSearch = signal("");
+  readonly campaignGroups = computed(() => {
+    const items = this.orderedSchedules();
+    const current = items.filter((item) => ["RUNNING", "WAITING"].includes(item.status));
+    return [
+      { id: "current", label: current.length > 1 ? "Current campaigns" : "Current campaign", items: current },
+      { id: "scheduled", label: "Scheduled and paused campaigns", items: items.filter((item) => ["QUEUED", "PAUSED"].includes(item.status)) },
+      { id: "past", label: "Past campaigns", items: items.filter((item) => !["RUNNING", "WAITING", "QUEUED", "PAUSED"].includes(item.status))
+        .sort((a, b) => b.id - a.id) },
+    ];
+  });
 
   private composerInitialized = false;
   private scheduleMutationEpoch = 0;
@@ -105,7 +115,7 @@ export class SettingsComponent {
           catchError((error: HttpErrorResponse) => of<ScheduleListPollResult>({
             snapshot: null,
             epoch,
-            error: this.apiErrorMessage(error, "Search campaigns are temporarily unavailable."),
+            error: this.apiErrorMessage(error, "Campaigns are temporarily unavailable."),
           })),
         );
       }),
@@ -161,7 +171,7 @@ export class SettingsComponent {
             catchError((error: HttpErrorResponse) => of<SubsearchDetailPollResult>({
               request,
               detail: null,
-              error: this.apiErrorMessage(error, "Sub-search details are temporarily unavailable."),
+              error: this.apiErrorMessage(error, "Subsearch details are temporarily unavailable."),
             })),
           )),
         );
@@ -232,13 +242,13 @@ export class SettingsComponent {
           this.composerOpen.set(false);
           this.scheduling.set(false);
           this.setSelectedSchedule(item.id);
-          this.scheduleMessage.set(`${this.modeLabel(item.mode)} in ${item.locationLabel} was scheduled.`);
+          this.scheduleMessage.set(`Campaign #${item.id} in ${item.locationLabel} was scheduled.`);
           this.scheduleRefresh.next();
         },
         error: (error: HttpErrorResponse) => {
           if (mutationEpoch !== this.scheduleMutationEpoch) return;
           this.scheduleMutationEpoch += 1;
-          this.scheduleError.set(this.apiErrorMessage(error, "The search campaign could not be scheduled."));
+          this.scheduleError.set(this.apiErrorMessage(error, "The campaign could not be scheduled."));
           this.scheduling.set(false);
           this.scheduleRefresh.next();
         },
@@ -264,7 +274,7 @@ export class SettingsComponent {
   selectSubsearch(id: number): void {
     const detail = this.selectedDetail();
     if (!detail || !detail.subsearches.some((candidate) => candidate.id === id)) return;
-    this.subsearchPinned.set(detail.search.currentSubsearch?.id !== id);
+    this.subsearchPinned.set(true);
     const inlineDetail = detail.currentSubsearchDetail?.subsearch.id === id
       ? detail.currentSubsearchDetail
       : null;
@@ -344,17 +354,12 @@ export class SettingsComponent {
     return index < 0 ? 0 : index + 1;
   }
 
-  modeLabel(mode: StrategyMode): string {
-    return this.strategyCatalog()?.modes.find((candidate) => candidate.id === mode)?.label
-      ?? (mode === "NO_WEBSITE" ? "Legacy no-website" : "Website rescue");
-  }
-
   statusLabel(status: ScheduledSearchStatus | ScheduledSubsearchStatus): string {
     switch (status) {
       case "QUEUED": return "Waiting";
       case "PENDING": return "Preparing";
       case "RUNNING": return "Running";
-      case "WAITING": return "Waiting for capacity";
+      case "WAITING": return "Waiting";
       case "PAUSED": return "Paused";
       case "EXHAUSTED": return "Limit reached";
       case "COMPLETED": return "Completed";
@@ -364,97 +369,25 @@ export class SettingsComponent {
     }
   }
 
-  campaignProgressLabel(item: ScheduledSearchSummary): string {
-    if (item.continueUntilValidatedLead && item.terminalSubsearchCount >= item.targetSubsearchCount) {
-      return `${item.terminalSubsearchCount} sub-searches finished`;
-    }
-    return `${item.terminalSubsearchCount}/${item.targetSubsearchCount} sub-searches`;
-  }
-
-  campaignSecondaryLabel(item: ScheduledSearchSummary): string {
-    if (item.currentSubsearch?.query) return item.currentSubsearch.query;
-    if (item.status === "QUEUED" && item.queuePosition !== null) return `Queue position ${item.queuePosition}`;
-    if (item.status === "WAITING") {
-      const retry = item.retryAt ? ` · retry ${this.formatTime(item.retryAt)}` : "";
-      return `${this.waitingReasonLabel(item.waitingReason)}${retry}`;
-    }
-    if (item.status === "RUNNING") {
-      return item.totalSubsearchCount > 0
-        ? "Waiting for the next eligible query"
-        : "Preparing the first exact query";
-    }
-    if (item.completedAt) return this.formatTime(item.completedAt);
-    return "Waiting for the first exact query";
-  }
-
-  campaignRemainingLabel(item: ScheduledSearchSummary): string {
-    if (["FAILED", "BLOCKED", "CANCELLED", "EXHAUSTED", "PAUSED"].includes(item.status)) {
-      return this.statusLabel(item.status);
-    }
-    const initialRemaining = Math.max(item.targetSubsearchCount - item.terminalSubsearchCount, 0);
-    if (initialRemaining > 0) {
-      return `${initialRemaining} of the initial ${item.targetSubsearchCount} still to finish`;
-    }
-    if (item.continueUntilValidatedLead && item.validatedLeadCount === 0 && item.status === "RUNNING") {
-      return `${item.targetSubsearchCount}-search batch complete · continuing until a candidate`;
-    }
-    if (item.validatedLeadCount > 0) {
-      return `${item.validatedLeadCount} ${item.validatedLeadCount === 1 ? "candidate" : "candidates"}`;
-    }
-    return this.statusLabel(item.status);
-  }
-
-  queuedLabel(count = this.queuedCount()): string {
-    if (count === 0) return "No campaigns waiting";
-    return `${count} ${count === 1 ? "campaign" : "campaigns"} waiting`;
-  }
-
   waitingReasonLabel(reason: string | null): string {
-    if (!reason) return "Waiting for an eligible search";
-    if (reason === "ready_queue_target") return "Candidate target reached";
-    if (reason.includes("daily_cap")) return "Daily search diversity limit reached";
-    if (reason.includes("cooldown") || reason.includes("next_eligible")) return "Search combinations are cooling down";
+    if (!reason) return "Waiting for an eligible subsearch";
+    if (reason === "ready_queue_target") return "The target number of businesses awaiting review has been reached";
+    if (reason === "ready_queue_hard_limit") return "The maximum number of businesses awaiting review has been reached";
+    if (reason.includes("daily_cap")) return "Daily subsearch diversity limit reached";
+    if (reason.includes("cooldown") || reason.includes("next_eligible")) return "Waiting before these subsearches can be repeated";
     if (reason.includes("budget")) return "Waiting for budget availability";
     return reason.replaceAll("_", " ");
-  }
-
-  queueContextLabel(detail: ScheduledSearchDetail): string {
-    if (detail.search.status === "QUEUED" && detail.search.queuePosition !== null) {
-      return `Campaign #${detail.search.queuePosition} in queue`;
-    }
-    if (detail.search.status !== "RUNNING") return this.queuedLabel(detail.queuedCount);
-    if (detail.queuedCount === 0) return "No campaigns waiting behind this one";
-    return `${detail.queuedCount} ${detail.queuedCount === 1 ? "campaign" : "campaigns"} waiting behind this one`;
-  }
-
-  stepActivityLabel(step: ScheduledSearchStep): string {
-    const total = step.pending + step.running + step.completed + step.failed;
-    if (step.running > 0) return `${step.running} active`;
-    if (step.pending > 0) return `${step.pending} waiting`;
-    if (step.failed > 0) return `${step.failed} failed`;
-    if (total > 0) return `${step.completed} done`;
-    return "Not started";
   }
 
   findingOutcomeLabel(outcome: ScheduledSearchFinding["outcome"]): string {
     switch (outcome) {
       case "evaluating": return "Evaluating";
       case "queued": return "Waiting";
-      case "candidate": return "Candidate";
-      case "qualified": return "Qualified";
-      case "needs_research": return "Needs research";
+      case "candidate": return "Selected";
+      case "qualified": return "Waiting for email";
+      case "needs_research": return "Not selected · needs attention";
       case "excluded": return "Not selected";
       case "duplicate": return "Already known";
-    }
-  }
-
-  findingStageLabel(stage: ScheduledSearchFinding["stage"]): string {
-    switch (stage) {
-      case "discovery": return "Discovery";
-      case "enrichment": return "Website & contacts";
-      case "analysis": return "Qualification";
-      case "drafting": return "Outreach draft";
-      case "complete": return "Complete";
     }
   }
 
@@ -498,6 +431,9 @@ export class SettingsComponent {
       this.composerInitialized = true;
     }
     this.reconcileSelection(snapshot.items);
+    if (this.selectedScheduleId() === null && snapshot.items.length) {
+      this.setSelectedSchedule(snapshot.currentId ?? this.orderedSchedules()[0]!.id);
+    }
   }
 
   private mutateSchedule(
@@ -573,6 +509,8 @@ export class SettingsComponent {
     const changed = this.selectedSubsearchId() !== subsearchId;
     if (changed) {
       this.selectedSubsearchId.set(subsearchId);
+      this.businessFilter.set("all");
+      this.businessSearch.set("");
       this.selectedSubsearchDetail.set(inlineDetail);
       this.subsearchError.set(null);
       this.loadingSubsearch.set(subsearchId !== null && inlineDetail === null);
@@ -591,6 +529,50 @@ export class SettingsComponent {
   private clearSubmissionFeedback(): void {
     this.scheduleError.set(null);
     this.scheduleMessage.set(null);
+  }
+
+  businessSelection(business: ScheduledSearchFinding): "selected" | "not_selected" | "pending" {
+    if (business.selection) return business.selection;
+    if (business.outcome === "candidate") return "selected";
+    if (["excluded", "duplicate", "needs_research"].includes(business.outcome)) return "not_selected";
+    return "pending";
+  }
+
+  businessCount(selection: "selected" | "not_selected" | "pending"): number {
+    return this.activeSubsearchDetail()?.findings.filter((business) => this.businessSelection(business) === selection).length ?? 0;
+  }
+
+  businessesFound(): number {
+    const detail = this.activeSubsearchDetail();
+    return Math.max(detail?.progress?.resultsFound ?? 0, this.displayedSubsearch()?.rawResultCount ?? 0, detail?.findings.length ?? 0);
+  }
+
+  visibleBusinesses(): ScheduledSearchFinding[] {
+    const query = this.businessSearch().trim().toLocaleLowerCase();
+    return (this.activeSubsearchDetail()?.findings ?? []).filter((business) =>
+      (this.businessFilter() === "all" || this.businessSelection(business) === this.businessFilter())
+      && (!query || `${business.businessName} ${business.city} ${business.reason ?? ""}`.toLocaleLowerCase().includes(query)),
+    );
+  }
+
+  businessReason(business: ScheduledSearchFinding): string {
+    if (business.reason?.trim()) return this.businessText(business.reason);
+    if (business.failureCode) return this.businessText(this.failureCodeLabel(business.failureCode));
+    if (this.businessSelection(business) === "selected") return "This business passed evaluation and its email is ready for review.";
+    if (this.businessSelection(business) === "pending") return "This business is still being processed. A selection decision has not been made.";
+    return "The reason was not recorded for this business in this subsearch.";
+  }
+
+  businessText(value: string): string {
+    return value.replace(/\b(?:leads|prospects|candidates)\b/gi, "businesses")
+      .replace(/\b(?:lead|prospect|candidate)\b/gi, "business")
+      .replace(/\bsub-searches\b/gi, "subsearches").replace(/\bsub-search\b/gi, "subsearch")
+      .replace(/\bqueries\b/gi, "subsearches").replace(/\bquery\b/gi, "subsearch")
+      .replace(/\bsearches\b/gi, "subsearches").replace(/\bsearch\b/gi, "subsearch");
+  }
+
+  stageLabel(stage: string): string {
+    return ({ discovery: "Find businesses", enrichment: "Website and contact", analysis: "Evaluate offer", drafting: "Prepare email", complete: "Complete" } as Record<string, string>)[stage] ?? "Prepare subsearch";
   }
 
   private apiErrorMessage(error: HttpErrorResponse, fallback: string): string {

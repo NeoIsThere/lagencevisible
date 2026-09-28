@@ -15,7 +15,7 @@ const protectedRoutes: Routes = [
   {
     path: "search",
     loadComponent: () => import("./settings/settings.component").then(({ SettingsComponent }) => SettingsComponent),
-    title: "Search · Local Lead Engine",
+    title: "Campaigns · Local Lead Engine",
   },
   {
     path: "advanced",

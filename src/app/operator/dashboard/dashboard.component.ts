@@ -77,12 +77,21 @@ export class DashboardComponent {
   }
 
   conditionLabel(condition: Lead["websiteCondition"]): string {
-    if (!condition) return "Website rescue";
+    if (!condition) return "Small web project";
     return condition.classification === "NO_WEBSITE"
-      ? "No website"
+      ? "Website not discovered"
       : condition.classification === "SEVERELY_OUTDATED"
         ? "Severely outdated"
         : condition.classification === "SEVERELY_POOR" ? "Severely poor" : "Website review";
+  }
+
+  rankingValue(lead: Lead, dimension: "activity" | "ability" | "digitalIntent" | "purchaseFit" | "reachability" | "need"): string {
+    if (!lead.ranking || lead.ranking.unknownDimensions.includes(dimension)) return "Unknown";
+    return String(lead.ranking[dimension]);
+  }
+
+  signalLabel(kind: string): string {
+    return kind.replaceAll("_", " ");
   }
 
   formatEuro(value: number): string {
