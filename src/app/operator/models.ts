@@ -508,7 +508,7 @@ export interface Lead {
     };
   } | null;
   aiArtifacts: AiArtifact[];
-  email: { subject: string | null; body: string | null };
+  email: { subject: string | null; body: string | null; isPlaceholder?: boolean };
   status: string;
   failureCode: string | null;
   retryAfter: string | null;

@@ -112,6 +112,9 @@
                 <strong>{{ current.email.subject || 'No subject' }}</strong>
               </summary>
               <p>{{ current.email.body || 'No draft is available.' }}</p>
+              @if (emailIsPlaceholder(current)) {
+                <p>Email generation was skipped. This placeholder cannot be sent.</p>
+              }
             </details>
 
             <details class="analysis-details">
@@ -290,7 +293,7 @@
               <button class="reject" type="button" [disabled]="!!processing()" (click)="act(current, 'reject')">
                 @if (isProcessing(current, 'reject')) { Working… } @else { Reject }
               </button>
-              <button class="send" type="button" [disabled]="!!processing()" (click)="act(current, 'send')">
+              <button class="send" type="button" [disabled]="!!processing() || emailIsPlaceholder(current)" [title]="emailIsPlaceholder(current) ? 'Email generation was skipped; no email is ready to send.' : ''" (click)="act(current, 'send')">
                 @if (isProcessing(current, 'send')) { Sending… } @else { Send email }
               </button>
             </div>

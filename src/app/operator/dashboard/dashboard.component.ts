@@ -43,6 +43,7 @@ export class DashboardComponent {
 
   act(current: Lead, action: "send" | "reject"): void {
     if (this.processing()) return;
+    if (action === "send" && this.emailIsPlaceholder(current)) return;
     this.queueVersion += 1;
     this.processing.set({ id: current.id, action });
     this.actionError.set(null);
@@ -116,6 +117,11 @@ export class DashboardComponent {
   isProcessing(lead: Lead, action?: "send" | "reject"): boolean {
     const processing = this.processing();
     return processing?.id === lead.id && (!action || processing.action === action);
+  }
+
+  emailIsPlaceholder(lead: Lead): boolean {
+    return lead.email.isPlaceholder === true
+      || [lead.email.subject, lead.email.body].some((value) => value?.toLowerCase().includes("<email goes here>"));
   }
 
   private loadQueue(showLoader: boolean): void {
