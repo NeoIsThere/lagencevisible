@@ -91,7 +91,8 @@ export class DashboardComponent {
   }
 
   signalLabel(kind: string): string {
-    return kind.replaceAll("_", " ");
+    const label = kind.toLowerCase().replaceAll("_", " ");
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
   formatEuro(value: number): string {

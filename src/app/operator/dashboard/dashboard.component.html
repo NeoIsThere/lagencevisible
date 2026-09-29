@@ -1,6 +1,7 @@
 <header class="page-heading">
   <div>
     <h1 class="page-title">Candidates</h1>
+    <p class="muted-copy">New websites and clear redesigns. Ordinary optimization businesses are excluded.</p>
     <nav class="candidate-views" aria-label="Candidate views">
       <a routerLink="/operator/candidates" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Ready</a>
       <a routerLink="/operator/candidates/attention" routerLinkActive="active" ariaCurrentWhenActive="page">Needs attention</a>
@@ -34,9 +35,9 @@
             <span>{{ leadIndex + 1 }} of {{ total() }} · {{ current.city }}</span>
             <h2>{{ current.businessName }}</h2>
           </div>
-          <div class="fit-score" title="Overall lead fit">
+          <div class="fit-score" title="Candidate score: weighted opportunity and business fit, plus evidenced activity bonuses">
             <strong>{{ current.scores.final }}</strong>
-            <span>fit</span>
+            <span>score</span>
           </div>
         </header>
 
@@ -54,12 +55,16 @@
               }
             </div>
 
+            <details class="analysis-details">
+              <summary>Technical audit (not used for redesign ranking)</summary>
             <div class="audit-strip" aria-label="Website audit scores">
               <div title="Performance"><span>Performance</span><strong>{{ auditScore(current, 'performance') }}</strong></div>
               <div title="Accessibility"><span>Accessibility</span><strong>{{ auditScore(current, 'accessibility') }}</strong></div>
               <div title="Best practices"><span>Best practices</span><strong>{{ auditScore(current, 'bestPractices') }}</strong></div>
               <div title="SEO"><span>SEO</span><strong>{{ auditScore(current, 'seo') }}</strong></div>
             </div>
+
+            </details>
 
             <nav class="source-links" aria-label="Candidate sources">
               @if (current.websiteUrl) { <a [href]="current.websiteUrl" target="_blank" rel="noreferrer">Website ↗</a> }
@@ -70,12 +75,26 @@
 
           <section class="decision">
             <div class="candidate-meta">
-              <span>{{ conditionLabel(current.websiteCondition) }}</span>
+              <span>{{ current.webOpportunity ? signalLabel(current.webOpportunity.type) : conditionLabel(current.websiteCondition) }}</span>
               <span class="language" [title]="current.languageReason">{{ current.communicationLanguage.toUpperCase() }}</span>
               <span>{{ current.contactEmail || 'No contact email' }}</span>
             </div>
 
             <p class="qualification">{{ qualificationSummary(current.qualificationReason) }}</p>
+
+            @if (current.webOpportunity; as opportunity) {
+              <section class="detail-section" aria-label="Website opportunity">
+                @if (opportunity.type === 'REDESIGN') {
+                  <h3>Clear redesign opportunity</h3>
+                  <p>Redesign {{ opportunity.redesign.redesignOpportunityScore }}/100 &middot; confidence {{ opportunity.redesign.confidence }}%</p>
+                  <ul>@for (trigger of opportunity.redesign.strongTriggers; track trigger) { <li>{{ signalLabel(trigger) }}</li> }</ul>
+                } @else {
+                  <h3>New website opportunity</h3>
+                  <p>No independent website found after completed research.</p>
+                }
+                <p>Business strength {{ opportunity.businessStrength }}/100 &middot; rebuild fit {{ opportunity.cheapRebuildFit }}/100</p>
+              </section>
+            }
 
             @if (current.prospectEvidence?.fixedScope; as scope) {
               <section class="detail-section">
@@ -96,13 +115,20 @@
             </details>
 
             <details class="analysis-details">
-              <summary>Lead details</summary>
+              <summary>Business details</summary>
               @if (qualificationSummary(current.qualificationReason) !== current.qualificationReason) {
                 <p class="qualification-full">{{ current.qualificationReason }}</p>
               }
 
               <section class="score-grid" aria-label="Qualification scores">
-                @if (current.ranking) {
+                @if (current.webOpportunity; as opportunity) {
+                <div><span>Business strength (min. 60)</span><strong>{{ opportunity.businessStrength }}</strong></div>
+                <div><span>Small-project fit (min. 65)</span><strong>{{ opportunity.smallProjectFit }}</strong></div>
+                <div><span>Contactability (min. 40)</span><strong>{{ opportunity.contactability }}</strong></div>
+                <div><span>Cheap rebuild fit (min. 65)</span><strong>{{ opportunity.cheapRebuildFit }}</strong></div>
+                <div><span>Website quality</span><strong>{{ opportunity.websiteQuality ?? 'Not assessed' }}</strong></div>
+                <div><span>Business / website mismatch</span><strong>{{ opportunity.businessWebsiteMismatch ?? 'Not applicable' }}</strong></div>
+                } @else if (current.ranking) {
                 <div><span>Purchase fit</span><strong>{{ rankingValue(current, 'purchaseFit') }}</strong></div>
                 <div><span>Digital intent</span><strong>{{ rankingValue(current, 'digitalIntent') }}</strong></div>
                 <div><span>Owner reachability</span><strong>{{ rankingValue(current, 'reachability') }}</strong></div>
@@ -116,8 +142,32 @@
                 }
               </section>
 
+              @if (current.webOpportunity; as opportunity) {
+                @if (opportunity.type === 'REDESIGN') {
+                  <section class="detail-section">
+                    <h3>Redesign assessment</h3>
+                    <p>Minimum 75/100, 80% confidence and one strong trigger.</p>
+                    <div class="score-grid" aria-label="Redesign components">
+                      <div><span>Visual obsolescence &middot; 35%</span><strong>{{ opportunity.redesign.visualObsolescence }}</strong></div>
+                      <div><span>Structural obsolescence &middot; 25%</span><strong>{{ opportunity.redesign.structuralObsolescence }}</strong></div>
+                      <div><span>Conversion weakness &middot; 20%</span><strong>{{ opportunity.redesign.conversionWeakness }}</strong></div>
+                      <div><span>Brand / business mismatch &middot; 15%</span><strong>{{ opportunity.redesign.brandBusinessMismatch }}</strong></div>
+                      <div><span>Mobile weakness &middot; 5%</span><strong>{{ opportunity.redesign.mobileUsabilityWeakness ?? 'Unknown' }}</strong></div>
+                      <div><span>Confidence (min. 80%)</span><strong>{{ opportunity.redesign.confidence }}%</strong></div>
+                    </div>
+                  </section>
+                }
+                <p class="muted-copy">Base score {{ opportunity.baseCandidateScore }} + recent activity {{ opportunity.activityBonus }} + recent website update {{ opportunity.websiteUpdateBonus }} = {{ opportunity.candidateScore }} (capped at 100). Bonuses affect order, not eligibility.</p>
+                @if (current.webOpportunityEvidence; as evidence) {
+                  <p>{{ evidence.rebuild.reason }}</p>
+                  @if (opportunity.websiteUpdateBonus && evidence.recentWebsiteUpdate; as update) {
+                    <p>Recent website update: {{ update.evidence }} <a [href]="update.sourceUrl" target="_blank" rel="noreferrer">Source</a></p>
+                  }
+                }
+              }
+
               @if (current.ranking; as ranking) {
-                <p class="muted-copy">{{ ranking.tier }} review priority. Scores order candidates; they are not conversion probabilities. Unknown means evidence is missing.</p>
+                <p class="muted-copy">Scores order businesses; they are not conversion probabilities. Unknown means evidence is missing.</p>
                 @if (current.prospectEvidence; as evidence) {
                   <section class="detail-section">
                     <h3>Commercial evidence</h3>

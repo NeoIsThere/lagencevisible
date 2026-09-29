@@ -403,6 +403,38 @@ export interface AiArtifact {
   lastError: string | null;
 }
 
+export type WebOpportunityType = "NEW_SITE" | "REDESIGN" | "OPTIMIZATION" | "NONE";
+export interface WebOpportunityAssessment {
+  policyVersion: number;
+  type: WebOpportunityType;
+  businessIdentityVerified: boolean;
+  allowedBusinessModel: boolean;
+  businessStrength: number;
+  websiteQuality: number | null;
+  websiteGap: number | null;
+  businessWebsiteMismatch: number | null;
+  smallProjectFit: number;
+  contactability: number;
+  cheapRebuildFit: number;
+  redesign: {
+    visualObsolescence: number;
+    structuralObsolescence: number;
+    conversionWeakness: number;
+    brandBusinessMismatch: number;
+    mobileUsabilityWeakness: number | null;
+    redesignOpportunityScore: number;
+    confidence: number;
+    strongTriggers: string[];
+  };
+  baseCandidateScore: number;
+  activityBonus: number;
+  websiteUpdateBonus: number;
+  candidateScore: number;
+  eligible: boolean;
+  retryable: boolean;
+  reasons: string[];
+}
+
 export interface Lead {
   id: string;
   businessName: string;
@@ -435,6 +467,18 @@ export interface Lead {
   websiteProblems: WebsiteProblem[];
   commercialEstimate: CommercialEstimate | null;
   deliveryApproach: DeliveryApproach | null;
+  webOpportunity?: WebOpportunityAssessment | null;
+  webOpportunityEvidence?: {
+    rebuild: {
+      cheapRebuildFit: number;
+      estimatedPageCount: number | null;
+      reusableContent: boolean;
+      reusableAssets: boolean;
+      requiredComplexFeatures: string[];
+      reason: string;
+    };
+    recentWebsiteUpdate: { sourceUrl: string; evidence: string; observedAt: string; confidence: number } | null;
+  } | null;
   ranking?: {
     version: number;
     activity: number;
