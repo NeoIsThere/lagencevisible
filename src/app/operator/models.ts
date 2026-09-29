@@ -66,7 +66,7 @@ export interface DeliveryApproach {
 
 export type AiProvider = 'openai';
 export type StoredAiProvider = AiProvider | 'codex';
-export type AiTaskKind = 'lead_analysis' | 'email_draft';
+export type AiTaskKind = 'opportunity_screen' | 'lead_analysis' | 'project_plan' | 'email_draft';
 
 /** NO_WEBSITE is retained only for rendering historical campaigns. */
 export type StrategyMode = "NO_WEBSITE" | "POOR_WEBSITE";
