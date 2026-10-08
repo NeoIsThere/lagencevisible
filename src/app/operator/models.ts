@@ -2,10 +2,12 @@ export interface Region { id: string; name: string; cities: string[]; businessFa
 export const LEAD_STATUSES = ['new', 'contacted', 'signed', 'paid - not delivered', 'not paid - delivered', 'completed'] as const;
 export type LeadStatus = typeof LEAD_STATUSES[number];
 export interface Evidence { kind: string; url: string; observedAt: string; facts: string[]; screenshot?: string }
+export interface StatusReason { code: string; details: string; issues?: Array<{ code: string; details: string; url?: string }> }
 export interface ProcessedBusiness {
   key: string; name: string; city: string; email: string | null; phone: string | null; website: string | null;
   status: LeadStatus | 'not eligible'; evaluationStatus: 'new' | 'not eligible';
-  reasonForStatus: { code: string; details: string; issues?: Array<{ code: string; details: string; url?: string }> };
+  reasonForStatus: StatusReason;
+  manualEligibility?: { markedAt: string; previousReasonForStatus: StatusReason };
   comments: string; evidence: Evidence[]; evaluatedAt: string;
 }
 export interface Campaign {

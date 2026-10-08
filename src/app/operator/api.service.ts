@@ -18,6 +18,12 @@ export class ApiService {
   startCampaign(regionId: string, businessFamily: string) { return this.http.post<Campaign>('/api/campaigns', { regionId, businessFamily }); }
   stopCampaign(id: string) { return this.http.post<Campaign>('/api/campaigns/' + encodeURIComponent(id) + '/stop', {}); }
   businesses(id: string) { return this.http.get<ProcessedBusiness[]>('/api/campaigns/' + encodeURIComponent(id) + '/businesses'); }
+  markEligible(campaignId: string, businessKey: string, reason: string) {
+    return this.http.post<{ business: ProcessedBusiness; campaign: Campaign }>(
+      '/api/campaigns/' + encodeURIComponent(campaignId) + '/businesses/' + encodeURIComponent(businessKey) + '/eligibility',
+      { reason },
+    );
+  }
   updateBusiness(key: string, changes: { status?: LeadStatus; comments?: string }) {
     return this.http.patch<ProcessedBusiness>('/api/businesses/' + encodeURIComponent(key), changes);
   }

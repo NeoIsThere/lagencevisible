@@ -20,6 +20,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   private timer?: ReturnType<typeof setTimeout>;
   private detailRequest = 0;
   private revision = 0;
+  private selectionRevision = 0;
   private destroyed = false;
   readonly campaigns = signal<Campaign[]>([]);
   readonly regions = signal<Region[]>([]);
@@ -29,6 +30,9 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   readonly detailLoading = signal(false);
   readonly busy = signal(false);
   readonly saving = signal<string | null>(null);
+  readonly markingEligible = signal(false);
+  readonly eligibilityEditor = signal<string | null>(null);
+  readonly eligibilityError = signal('');
   readonly error = signal('');
   readonly notice = signal('');
   readonly expanded = signal<string | null>(null);
@@ -41,6 +45,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   readonly statuses = LEAD_STATUSES;
   readonly readable = readable;
   businessFamily = '';
+  eligibilityReason = '';
   commentDrafts: Partial<Record<string, string>> = {};
   statusDrafts: Partial<Record<string, LeadStatus>> = {};
 
@@ -48,12 +53,14 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void { this.destroyed = true; clearTimeout(this.timer); }
 
   async refresh(): Promise<void> {
+    if (this.markingEligible()) return;
     clearTimeout(this.timer);
     this.error.set('');
     this.loading.set(true);
+    const revision = this.revision;
     try {
       const result = await firstValueFrom(forkJoin({ campaigns: this.api.campaigns(), regions: this.api.regions() }));
-      if (this.destroyed) return;
+      if (this.destroyed || revision !== this.revision) return;
       this.campaigns.set(result.campaigns);
       this.regions.set(result.regions);
       if (!result.regions.some(region => region.id === this.regionId())) this.selectRegion(result.regions[0]?.id ?? '');
@@ -68,6 +75,9 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   selectRegion(id: string): void { this.regionId.set(id); this.businessFamily = this.families()[0] ?? ''; }
 
   async selectCampaign(campaign: Campaign): Promise<void> {
+    const selection = ++this.selectionRevision;
+    this.detailRequest++;
+    this.eligibilityEditor.set(null); this.eligibilityReason = ''; this.eligibilityError.set('');
     this.expanded.set(null);
     this.filter.set('all');
     this.commentDrafts = {};
@@ -75,6 +85,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
     this.selected.set(campaign);
     this.businesses.set([]);
     await this.router.navigate([], { relativeTo: this.route, queryParams: { campaign: campaign.id }, replaceUrl: true });
+    if (this.destroyed || selection !== this.selectionRevision) return;
     try { await this.loadDetail(campaign.id); }
     catch (error) { this.error.set(errorMessage(error)); }
   }
@@ -98,12 +109,12 @@ export class CampaignsComponent implements OnInit, OnDestroy {
 
   private async poll(): Promise<void> {
     if (this.destroyed) return;
-    if (this.busy() || this.saving()) { this.schedulePoll(); return; }
+    if (this.busy() || this.saving() || this.markingEligible()) { this.schedulePoll(); return; }
     const revision = this.revision;
     try {
       const campaigns = await firstValueFrom(this.api.campaigns());
       if (this.destroyed || revision !== this.revision) return;
-      if (this.busy() || this.saving()) { this.schedulePoll(); return; }
+      if (this.busy() || this.saving() || this.markingEligible()) { this.schedulePoll(); return; }
       this.campaigns.set(campaigns);
       this.now.set(Date.now());
       const selected = this.selected();
@@ -113,7 +124,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   }
 
   async start(): Promise<void> {
-    if (this.busy() || this.running() || !this.regionId() || !this.businessFamily) return;
+    if (this.busy() || this.markingEligible() || this.running() || !this.regionId() || !this.businessFamily) return;
     this.busy.set(true); this.error.set(''); this.notice.set('');
     this.revision++;
     try {
@@ -126,7 +137,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   }
 
   async stop(campaign: Campaign): Promise<void> {
-    if (this.busy()) return;
+    if (this.busy() || this.markingEligible()) return;
     this.busy.set(true); this.error.set('');
     this.revision++; this.detailRequest++; this.detailLoading.set(false);
     try {
@@ -140,7 +151,7 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   }
 
   async saveBusiness(business: ProcessedBusiness): Promise<void> {
-    if (this.saving()) return;
+    if (this.saving() || this.markingEligible()) return;
     this.saving.set(business.key); this.error.set(''); this.notice.set('');
     this.detailRequest++; this.detailLoading.set(false);
     const changes: { comments?: string; status?: LeadStatus } = {};
@@ -163,6 +174,49 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   hasChanges(business: ProcessedBusiness): boolean {
     return (Object.hasOwn(this.commentDrafts, business.key) && this.commentDrafts[business.key] !== business.comments)
       || (!!this.statusDrafts[business.key] && this.statusDrafts[business.key] !== business.status);
+  }
+
+  canMarkEligible(business: ProcessedBusiness): boolean {
+    return business.evaluationStatus === 'not eligible' && business.status === 'not eligible'
+      && !!business.name.trim() && !!business.city.trim()
+      && !['ALREADY_RETURNED', 'UNKNOWN_IDENTITY'].includes(business.reasonForStatus.code.toUpperCase());
+  }
+
+  beginEligibility(business: ProcessedBusiness): void {
+    if (!this.canMarkEligible(business) || this.markingEligible() || this.saving() || this.busy()) return;
+    this.eligibilityEditor.set(business.key); this.eligibilityReason = ''; this.eligibilityError.set('');
+  }
+
+  cancelEligibility(): void {
+    if (this.markingEligible()) return;
+    this.eligibilityEditor.set(null); this.eligibilityReason = ''; this.eligibilityError.set('');
+  }
+
+  async markEligible(business: ProcessedBusiness): Promise<void> {
+    const campaign = this.selected();
+    if (!campaign || this.markingEligible() || this.busy() || this.saving() || !this.canMarkEligible(business)) return;
+    if (!this.businesses().some(item => item.key === business.key && this.canMarkEligible(item))) return;
+    const reason = this.eligibilityReason.trim();
+    if (!reason || reason.length > 4000) {
+      this.eligibilityError.set('Explain why this business should be a lead, using 1 to 4,000 characters.'); return;
+    }
+    const selection = this.selectionRevision;
+    this.markingEligible.set(true); this.eligibilityError.set(''); this.error.set(''); this.notice.set('');
+    this.revision++; this.detailRequest++; this.detailLoading.set(false); clearTimeout(this.timer);
+    try {
+      const updated = await firstValueFrom(this.api.markEligible(campaign.id, business.key, reason));
+      if (this.destroyed) return;
+      this.campaigns.update(items => items.map(item => item.id === updated.campaign.id ? updated.campaign : item));
+      if (this.selected()?.id !== campaign.id || this.selectionRevision !== selection) return;
+      this.detailRequest++;
+      this.selected.set(updated.campaign);
+      this.businesses.update(items => items.map(item => item.key === business.key ? updated.business : item));
+      if (this.filter() === 'not eligible') this.filter.set('all');
+      this.eligibilityEditor.set(null); this.eligibilityReason = '';
+      this.notice.set(`${business.name} marked eligible.`);
+    } catch (error) {
+      if (!this.destroyed && this.selected()?.id === campaign.id && this.selectionRevision === selection) this.eligibilityError.set(errorMessage(error));
+    } finally { this.markingEligible.set(false); this.schedulePoll(); }
   }
 
   elapsed(campaign: Campaign): string {
