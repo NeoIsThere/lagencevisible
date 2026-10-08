@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.busy.set(true);
     try {
-      if (await this.auth.restore()) await this.router.navigateByUrl("/operator/candidates");
+      if (await this.auth.restore()) await this.router.navigateByUrl("/operator/campaigns");
     } finally {
       this.busy.set(false);
     }
@@ -35,9 +35,9 @@ export class LoginComponent implements OnInit {
     this.error.set("");
     try {
       await this.auth.login(this.username.trim(), this.password);
-      const target = this.route.snapshot.queryParamMap.get("returnUrl") ?? "/operator/candidates";
+      const target = this.route.snapshot.queryParamMap.get("returnUrl") ?? "/operator/campaigns";
       const safeTarget = target === "/operator" || target.startsWith("/operator/");
-      await this.router.navigateByUrl(safeTarget ? target : "/operator/candidates");
+      await this.router.navigateByUrl(safeTarget ? target : "/operator/campaigns");
     } catch (error) {
       this.error.set(error instanceof HttpErrorResponse && error.status === 401
         ? "Invalid username or password."

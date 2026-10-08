@@ -16,20 +16,13 @@ export const SITE_CONFIG = {
     hostAddress: '88 Colin P. Kelly Jr. St., San Francisco, CA 94107, United States',
     hostWebsite: 'https://pages.github.com/',
     hostSupport: 'https://support.github.com/',
-    emailProcessorName: 'Resend (Plus Five Five, Inc.)',
-    emailProcessorPrivacyUrl: 'https://resend.com/legal/privacy-policy',
-    emailProcessorDpaUrl: 'https://resend.com/legal/dpa',
   },
 } as const;
 
 declare global {
   interface Window {
-    __SITE_CONFIG__?: { CONTACT_FORM_ENDPOINT?: string; OPERATOR_API_ORIGIN?: string };
+    __SITE_CONFIG__?: { OPERATOR_API_ORIGIN?: string };
   }
-}
-
-export function contactEndpoint(): string {
-  return window.__SITE_CONFIG__?.CONTACT_FORM_ENDPOINT?.trim() ?? '';
 }
 
 export function operatorApiUrl(path: string): string {

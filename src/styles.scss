@@ -1,4 +1,5 @@
 @use 'sass:color';
+@use './app/operator/operator-ui';
 
 :root {
   --ink: #0b1d2b;
@@ -261,7 +262,7 @@ app-home-page > section[aria-labelledby='faq-title'] { contain-intrinsic-size: a
 
 /* Contact and legal */
 .contact-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 80px; align-items: start; }.contact-aside { position: sticky; top: 115px; }.contact-aside h1 { font-size: clamp(2.7rem, 5vw, 4.8rem); }.contact-aside .lead { margin-bottom: 40px; }.contact-detail { display: flex; gap: 14px; align-items: center; margin-top: 17px; font-size: .88rem; font-weight: 700; }.contact-detail span:first-child { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; background: var(--sand); }
-.contact-form { padding: clamp(28px, 5vw, 58px); border-radius: 24px; background: var(--white); box-shadow: 0 20px 70px rgba(11,29,43,.09); }.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }.field { position: relative; margin-bottom: 23px; }.field label { display: block; margin-bottom: 7px; font-size: .76rem; font-weight: 800; }.field .optional { color: #7c858a; font-weight: 500; }.field input, .field textarea { width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; color: var(--ink); background: transparent; outline: none; }.field input:focus, .field textarea:focus { border-color: var(--coral); box-shadow: 0 1px var(--coral); }.field input[aria-invalid='true'], .field textarea[aria-invalid='true'] { border-color: #b62929; }.field textarea { min-height: 130px; resize: vertical; }.field-error { display: block; margin-top: 5px; color: #a61c1c; font-size: .72rem; }.form-submit { display: flex; align-items: center; gap: 20px; margin-top: 12px; }.form-submit .button:disabled { cursor: wait; opacity: .62; transform: none; }.form-submit small { max-width: 250px; color: var(--ink-soft); line-height: 1.4; }.form-message { margin-top: 20px; padding: 14px 17px; border-radius: 8px; font-size: .85rem; font-weight: 650; }.form-message.success { color: #174d35; background: #d8f0e3; }.form-message.error { color: #811b1b; background: #f9dddd; }
+.contact-card { padding: clamp(28px, 5vw, 58px); border-radius: 24px; background: var(--white); box-shadow: 0 20px 70px rgba(11,29,43,.09); }.contact-card h2 { font-size: clamp(2rem, 3vw, 3rem); }.contact-card > p { color: var(--ink-soft); }.contact-card .button { margin: 10px 0 24px; }.contact-card .contact-note { font-size: .85rem; line-height: 1.7; }.contact-note .text-link { overflow-wrap: anywhere; display: inline; }
 .legal-header { padding: 90px 0 60px; }.legal-header h1 { margin-bottom: 20px; }.legal-prose { padding-bottom: 100px; }.legal-prose h2 { margin-top: 2.2em; font-size: 1.8rem; }.legal-prose p, .legal-prose li, .legal-prose address { color: var(--ink-soft); }.legal-prose address { font-style: normal; line-height: 1.8; }
 .not-found { display: grid; min-height: 68vh; place-items: center; padding: 80px 20px; text-align: center; }.not-found strong { display: block; color: var(--coral); font-size: clamp(5rem, 16vw, 11rem); line-height: .8; }.not-found h1 { margin: 35px 0 15px; font-size: 2.6rem; }.not-found p { color: var(--ink-soft); }
 
@@ -295,7 +296,7 @@ app-home-page > section[aria-labelledby='faq-title'] { contain-intrinsic-size: a
   .faq-sticky, .contact-aside { position: static; }.final-cta h2 br { display: none; }
   .footer-main { align-items: flex-start; flex-direction: column; gap: 28px; }.footer-links { justify-content: flex-start; }
   .article-layout { grid-template-columns: 1fr; gap: 30px; padding-inline: 15px; }.article-toc { position: static; }.article-header { padding: 60px 0 40px; }.article-end-cta { padding: 28px; }
-  .field-grid { grid-template-columns: 1fr; }.contact-form { padding: 28px 20px; }.form-submit { align-items: stretch; flex-direction: column; }.form-submit .button { width: 100%; }
+  .contact-card { padding: 28px 20px; }.contact-card .button { width: 100%; }
 }
 
 @media (max-width: 370px) {
@@ -305,21 +306,3 @@ app-home-page > section[aria-labelledby='faq-title'] { contain-intrinsic-size: a
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
-
-/* Authenticated operator application, migrated from Local Lead Engine. */
-.operator-theme .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; color: var(--accent-dark); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-.operator-theme .eyebrow::before { width: 28px; height: 1px; margin: 0; content: ''; background: var(--accent); }
-.operator-theme .page-title { margin: 0; font-family: var(--display); font-size: clamp(32px, 4vw, 48px); font-weight: 650; line-height: 1; letter-spacing: -.035em; }
-.operator-theme .page-intro { max-width: 580px; margin: 17px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
-.operator-theme .panel { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-.operator-theme .empty-state { display: flex; min-height: 320px; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
-.operator-theme .empty-state .pulse { position: relative; width: 14px; height: 14px; margin-bottom: 26px; border: 1px solid var(--accent); border-radius: 50%; }
-.operator-theme .empty-state .pulse::before, .operator-theme .empty-state .pulse::after { position: absolute; inset: -9px; content: ''; border: 1px solid var(--accent); border-radius: inherit; opacity: .45; animation: operator-pulse 2.2s infinite; }
-.operator-theme .empty-state .pulse::after { inset: -18px; opacity: .2; animation-delay: .7s; }
-.operator-theme .empty-state h2 { margin: 0 0 10px; font-family: var(--display); font-size: 28px; font-weight: 400; }
-.operator-theme .empty-state p { max-width: 440px; margin: 0; color: var(--muted); line-height: 1.6; }
-.operator-theme .error-text { color: #943d31 !important; }
-.operator-theme .skeleton { background: linear-gradient(90deg, var(--paper-deep) 20%, #f7f4ed 50%, var(--paper-deep) 80%); background-size: 200% 100%; animation: operator-shimmer 1.6s infinite linear; }
-.operator-theme .browser-frame { position: static; width: auto; border-radius: 0; box-shadow: none; transform: none; }
-@keyframes operator-pulse { 0% { opacity: .55; transform: scale(.8); } 75%, 100% { opacity: 0; transform: scale(1.3); } }
-@keyframes operator-shimmer { to { background-position: -200% 0; } }

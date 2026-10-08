@@ -1,7 +1,7 @@
 <section class="login-panel panel" aria-labelledby="login-title">
-  <p class="eyebrow">Local Lead Engine</p>
+  <p class="eyebrow">L’agence visible</p>
   <h1 id="login-title">Log in</h1>
-  <p class="intro">Sign in to manage your searches and leads.</p>
+  <p class="intro">Sign in to evaluate businesses and manage your leads.</p>
   <form (ngSubmit)="submit()" #loginForm="ngForm">
     <label for="username">Username</label>
     <input id="username" name="username" autocomplete="username" [(ngModel)]="username" required maxlength="120" [disabled]="busy()">

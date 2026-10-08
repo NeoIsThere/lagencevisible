@@ -14,7 +14,7 @@ Le site local est disponible sur `http://localhost:4201/`.
 ## Espace opérateur
 
 L'icône de connexion dans l'en-tête ouvre `/login`. Après authentification,
-l'interface Local Lead Engine est disponible sous `/operator`. En production,
+l'interface d’évaluation des entreprises est disponible sous `/operator`. Elle comprend trois pages : campagnes, lieux et configuration. En production,
 ses requêtes authentifiées ciblent `https://api.lagencevisible.com`; en local,
 `npm start` utilise le proxy HTTPS défini dans `proxy.conf.cjs`.
 
@@ -29,17 +29,13 @@ Le domaine public, l’email et les informations légales utilisées par le site
 
 Avant publication, vérifier que les coordonnées légales correspondent toujours à la situation de l’entreprise et que le domaine personnalisé est configuré dans les paramètres GitHub Pages et chez le registrar.
 
-### Formulaire
+### Contact
 
-Configurer l’URL publique de réception dans `public/site-config.js` :
+La page de contact propose un lien email direct qui ouvre la messagerie du visiteur. Aucun formulaire, brouillon ou envoi par le backend n’est utilisé. L’adresse se configure dans `src/app/core/site.config.ts`.
 
-```js
-window.__SITE_CONFIG__ = {
-  CONTACT_FORM_ENDPOINT: 'https://votre-service.example/contact',
-};
-```
+### Campagnes
 
-L’endpoint doit accepter un `POST` JSON, appliquer côté serveur la validation et la limitation de débit, puis envoyer le message avec Resend. La clé API Resend doit rester dans les secrets de cette fonction serveur : elle ne doit jamais être ajoutée au code Angular, à `site-config.js` ou à l’artefact GitHub Pages.
+Chaque campagne fixe une région et une famille d’entreprises. Les villes sont parcourues dans l’ordre défini sur la page Lieux. Une seule campagne peut être active ; les trois limites configurables sont le nombre de leads, la durée et le budget API (5 leads, 3 heures et 2 USD par défaut). La page Campagnes affiche le coût API estimé et le budget fixé au lancement, les preuves d’éligibilité, les moyens de contact, les commentaires et les six statuts de suivi des leads. Les appels API et l’environnement sont visibles sur Configuration, sans afficher les secrets.
 
 ## Blog Markdown
 
@@ -63,7 +59,7 @@ Dans les paramètres GitHub du dépôt :
 1. choisir **Settings → Pages → Source → GitHub Actions** ;
 2. vérifier que les Actions sont autorisées dans **Settings → Actions → General** ;
 3. si un domaine personnalisé est utilisé, le configurer dans **Settings → Pages**, puis mettre à jour les DNS chez le registrar (avec ce workflow GitHub Actions, un fichier `CNAME` n’est pas requis) ;
-4. tester le formulaire depuis l’URL Pages finale et autoriser cette origine dans la configuration CORS du prestataire de formulaire ;
+4. tester le lien email de contact et la connexion opérateur depuis l’URL Pages finale ;
 5. vérifier les mentions légales, la politique de confidentialité, les coordonnées et tous les liens avant publication ;
 6. après publication, ajouter le domaine à Google Search Console et envoyer l’URL `/sitemap.xml`.
 

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { AuthService } from "./auth.service";
-import { LogsDialogComponent } from "./logs/logs-dialog.component";
 
 @Component({
   selector: "app-operator-shell",
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, LogsDialogComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: "./operator-shell.component.html",
   styleUrl: "./operator-shell.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -96,8 +96,8 @@ export const routes: Routes = [
     data: {
       title: { fr: 'Politique de confidentialité | L’agence visible', en: 'Privacy policy | L’agence visible' },
       description: {
-        fr: 'Comment L’agence visible collecte, utilise et protège les données envoyées via son formulaire.',
-        en: 'How L’agence visible collects, uses and protects data submitted through its form.',
+        fr: 'Comment L’agence visible utilise et protège les données de vos demandes par email.',
+        en: 'How L’agence visible uses and protects the data in your email enquiries.',
       },
     },
   },

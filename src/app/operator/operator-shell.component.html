@@ -1,27 +1,16 @@
 <div class="app-shell operator-theme">
-  @if (auth.username()) {
   <header class="topbar">
-    <a class="brand" routerLink="/operator/candidates" aria-label="Local Lead Engine candidates">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span>
-        <strong>LOCAL LEAD</strong>
-        <small>ENGINE</small>
-      </span>
+    <a class="operator-brand" routerLink="/operator/campaigns" aria-label="L’agence visible campaigns">
+      <span class="operator-mark" aria-hidden="true">v.</span>
+      <span>L’agence visible <small>Business evaluation</small></span>
     </a>
-
-    <nav class="primary-nav" aria-label="Primary navigation">
-      <a routerLink="/operator/candidates" routerLinkActive="active" ariaCurrentWhenActive="page">Candidates</a>
-      <a routerLink="/operator/search" routerLinkActive="active" ariaCurrentWhenActive="page">Campaigns</a>
-      <a routerLink="/operator/advanced" routerLinkActive="active" ariaCurrentWhenActive="page">Advanced</a>
+    <nav class="primary-nav" aria-label="Operator navigation">
+      <a routerLink="/operator/campaigns" routerLinkActive="active" ariaCurrentWhenActive="page">Campaigns</a>
+      <a routerLink="/operator/locations" routerLinkActive="active" ariaCurrentWhenActive="page">Locations</a>
+      <a routerLink="/operator/configuration" routerLinkActive="active" ariaCurrentWhenActive="page">Configuration</a>
     </nav>
-
-    <div class="topbar-actions">
-      <app-logs-dialog />
-      <button class="logout-button" type="button" (click)="logout()" [disabled]="loggingOut()">{{ loggingOut() ? "Logging out…" : "Log out" }}</button>
-    </div>
+    <button class="logout-button" type="button" (click)="logout()" [disabled]="loggingOut()">{{ loggingOut() ? 'Logging out…' : 'Log out' }}</button>
   </header>
-  }
-  @if (logoutError()) { <p class="error-text" role="alert">{{ logoutError() }}</p> }
-
-  <main><router-outlet /></main>
+  @if (logoutError()) { <p class="logout-error" role="alert">{{ logoutError() }}</p> }
+  <div class="main" id="operator-main"><router-outlet /></div>
 </div>

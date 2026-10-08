@@ -1,0 +1,20 @@
+<header class="page-head"><div><h1>Configuration</h1><p>Campaign limits and connection status.</p></div><button class="quiet" type="button" (click)="load()" [disabled]="loading() || saving() || checking()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button></header>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+<div class="configuration-grid">
+  <section class="panel limits-panel" aria-labelledby="limits-title"><div class="panel-head"><h2 id="limits-title">Campaign limits</h2></div>
+    <form class="panel-body" (ngSubmit)="save()" #settingsForm="ngForm">
+      <p class="hint">A campaign completes when a limit is reached. New limits apply to future campaigns.</p>
+      <label>Maximum leads per campaign<input name="maxLeads" type="number" min="1" max="1000000" step="1" required [(ngModel)]="maxLeads" [disabled]="loading() || saving() || !config()"><span class="hint">Default: 5 eligible businesses.</span></label>
+      <label>Maximum campaign duration<div class="input-unit"><input name="duration" type="number" [min]="1 / 60" [max]="35790 / 60" step="any" required [(ngModel)]="maxDurationHours" [disabled]="loading() || saving() || !config()"><span>hours</span></div><span class="hint">Default: 3 hours. Use whole minutes; 0.5 hours = 30 minutes.</span></label>
+      <label>Maximum API spend per campaign<div class="input-unit"><input name="maxApiCostUsd" type="number" min="0.01" max="10000" step="0.01" required [(ngModel)]="maxApiCostUsd" [disabled]="loading() || saving() || !config()"><span>USD</span></div><span class="hint">Default: $2.00 per campaign.</span></label>
+      <button class="primary" type="submit" [disabled]="saving() || loading() || !config() || settingsForm.invalid">{{ saving() ? 'Saving…' : 'Save limits' }}</button>
+    </form>
+  </section>
+  <section class="panel connections-panel" aria-labelledby="connections-title"><div class="panel-head"><h2 id="connections-title">API connections</h2><button type="button" class="quiet small" (click)="check()" [disabled]="loading() || checking()">{{ checking() ? 'Checking…' : 'Check connections' }}</button></div><div class="panel-body"><p class="hint connection-note">Connection checks do not run paid searches.</p>
+    @for (connection of connections(); track connection.provider) {
+      <article class="connection"><div class="connection-heading"><h3>{{ readable(connection.provider) }}</h3><span class="badge" [class.positive]="positive(connection.status)">{{ readable(connection.status) }}</span></div><p>{{ connection.detail }}</p>@if (connection.checkedAt) { <small class="hint">Checked {{ connection.checkedAt | date:'dd MMM yyyy, HH:mm' }}</small> }</article>
+    } @empty { <p class="hint">{{ loading() ? 'Loading connection status…' : 'No connection status available. Check connections to inspect the APIs.' }}</p> }
+  </div></section>
+  <section class="panel environment-panel" aria-labelledby="environment-title"><div class="panel-head"><h2 id="environment-title">Environment</h2><span class="badge">Read only</span></div><div class="panel-body"><p class="hint environment-note">Deployment configuration. Secret values are never displayed.</p><dl class="environment-list">@for (item of environment(); track item.name) { <div><dt>{{ item.name }}</dt><dd>{{ item.value }}</dd></div> } @empty { <p class="hint">{{ loading() ? 'Loading environment…' : 'Environment details are unavailable.' }}</p> }</dl></div></section>
+</div>

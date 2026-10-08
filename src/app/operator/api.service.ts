@@ -1,136 +1,35 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
-import type {
-  ApplicationLogsResponse,
-  DatabasePage,
-  DatabaseTableSummary,
-  EngineStatus,
-  EnvironmentVariable,
-  Lead,
-  ManualResearchLead,
-  ScheduledSearchDetail,
-  ScheduledSearchListResponse,
-  ScheduledSubsearchDetail,
-  ScheduleSearchResponse,
-  SearchRun,
-  StrategyDataSnapshot,
-  StrategyCatalog,
-  StrategyMode,
-} from "./models";
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import type { Campaign, Configuration, Connections, LeadStatus, ProcessedBusiness, Region, Settings } from './models';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly http = inject(HttpClient);
-
-  nextLead() {
-    return this.http.get<{ lead: Lead | null }>("/api/queue/next");
+  regions() { return this.http.get<Region[]>('/api/regions'); }
+  createRegion(region: Omit<Region, 'id'>) { return this.http.post<Region>('/api/regions', region); }
+  updateRegion(id: string, region: Omit<Region, 'id'>) { return this.http.put<Region>('/api/regions/' + encodeURIComponent(id), region); }
+  deleteRegion(id: string) { return this.http.delete<void>('/api/regions/' + encodeURIComponent(id)); }
+  configuration() { return this.http.get<Configuration>('/api/config'); }
+  saveSettings(settings: Settings) { return this.http.put<Configuration>('/api/config', settings); }
+  connections() { return this.http.get<Connections>('/api/connections'); }
+  checkConnections() { return this.http.post<Connections>('/api/connections/check', {}); }
+  campaigns() { return this.http.get<Campaign[]>('/api/campaigns'); }
+  campaign(id: string) { return this.http.get<Campaign>('/api/campaigns/' + encodeURIComponent(id)); }
+  startCampaign(regionId: string, businessFamily: string) { return this.http.post<Campaign>('/api/campaigns', { regionId, businessFamily }); }
+  stopCampaign(id: string) { return this.http.post<Campaign>('/api/campaigns/' + encodeURIComponent(id) + '/stop', {}); }
+  businesses(id: string) { return this.http.get<ProcessedBusiness[]>('/api/campaigns/' + encodeURIComponent(id) + '/businesses'); }
+  updateBusiness(key: string, changes: { status?: LeadStatus; comments?: string }) {
+    return this.http.patch<ProcessedBusiness>('/api/businesses/' + encodeURIComponent(key), changes);
   }
-
-  reviewQueue() {
-    return this.http.get<{ leads: Lead[]; total: number }>("/api/queue");
+}
+export function errorMessage(error: unknown): string {
+  if (error instanceof HttpErrorResponse) {
+    const message = error.error?.error?.message ?? error.error?.message ?? error.error?.error;
+    if (typeof message === 'string') return message;
+    if (error.status === 0) return 'Cannot connect to the backend. Check the connection, then refresh.';
   }
-
-  send(id: string) {
-    return this.http.post<{ ok: boolean; status: string }>(`/api/leads/${encodeURIComponent(id)}/send`, {});
-  }
-
-  reject(id: string) {
-    return this.http.post<{ ok: boolean; status: string }>(`/api/leads/${encodeURIComponent(id)}/reject`, {});
-  }
-
-  history() {
-    return this.http.get<{ leads: Lead[] }>("/api/history");
-  }
-
-  manualResearch() {
-    return this.http.get<{ leads: ManualResearchLead[]; total: number }>("/api/manual-research");
-  }
-
-  retryCandidateEvidence(id: string) {
-    return this.http.post<{ ok: boolean; queued: boolean; status: string }>(
-      `/api/manual-research/${encodeURIComponent(id)}/retry`,
-      {},
-    );
-  }
-
-  status() {
-    return this.http.get<EngineStatus>("/api/status");
-  }
-
-  strategyCatalog() {
-    return this.http.get<StrategyCatalog>("/api/strategy/catalog");
-  }
-
-  strategyData() {
-    return this.http.get<StrategyDataSnapshot>("/api/strategy/data");
-  }
-
-  strategySchedules() {
-    return this.http.get<ScheduledSearchListResponse>("/api/strategy/schedules");
-  }
-
-  scheduleStrategySearch(configuration: {
-    mode: StrategyMode;
-    clusterId: string;
-    continueUntilValidatedLead: boolean;
-  }) {
-    return this.http.post<ScheduleSearchResponse>("/api/strategy/schedules", configuration);
-  }
-
-  pauseStrategySchedule(id: number) {
-    return this.http.post<ScheduleSearchResponse>(
-      `/api/strategy/schedules/${encodeURIComponent(String(id))}/pause`,
-      {},
-    );
-  }
-
-  resumeStrategySchedule(id: number) {
-    return this.http.post<ScheduleSearchResponse>(
-      `/api/strategy/schedules/${encodeURIComponent(String(id))}/resume`,
-      {},
-    );
-  }
-
-  cancelStrategySchedule(id: number) {
-    return this.http.post<ScheduleSearchResponse>(
-      `/api/strategy/schedules/${encodeURIComponent(String(id))}/cancel`,
-      {},
-    );
-  }
-
-  strategySchedule(id: number) {
-    return this.http.get<ScheduledSearchDetail>(`/api/strategy/schedules/${encodeURIComponent(String(id))}`);
-  }
-
-  strategyScheduleSubsearch(id: number, subsearchId: number) {
-    return this.http.get<ScheduledSubsearchDetail>(
-      `/api/strategy/schedules/${encodeURIComponent(String(id))}/subsearches/${encodeURIComponent(String(subsearchId))}`,
-    );
-  }
-
-  startSearch(configuration: {
-    query: string;
-    cities: string[];
-    maxResults: number;
-  }) {
-    return this.http.post<{ ok: boolean; search: SearchRun }>("/api/searches", configuration);
-  }
-
-  databaseTables() {
-    return this.http.get<{ tables: DatabaseTableSummary[] }>("/api/operator/database/tables");
-  }
-
-  databasePage(table: string, limit = 50, offset = 0) {
-    return this.http.get<DatabasePage>(
-      `/api/operator/database/${encodeURIComponent(table)}?limit=${limit}&offset=${offset}`,
-    );
-  }
-
-  environment() {
-    return this.http.get<{ variables: EnvironmentVariable[] }>("/api/operator/environment");
-  }
-
-  applicationLogs(filters: { service: string; level: string; q: string }) {
-    return this.http.get<ApplicationLogsResponse>("/api/operator/logs", { params: { ...filters, limit: 300 } });
-  }
+  return 'The request could not be completed. Refresh to check the current state.';
+}
+export function readable(value: string): string {
+  return value.replace(/[_-]+/g, ' ').replace(/^./, first => first.toUpperCase());
 }

@@ -1,8 +1,6 @@
 /**
- * Configuration publique du formulaire.
- * Cette URL n'est pas un secret : ne placez jamais de clé d'API dans ce fichier.
+ * Public operator API origin. Never put API keys or credentials in this file.
  */
 window.__SITE_CONFIG__ = {
-  CONTACT_FORM_ENDPOINT: 'https://api.lagencevisible.com/mail',
   OPERATOR_API_ORIGIN: 'https://api.lagencevisible.com',
 };

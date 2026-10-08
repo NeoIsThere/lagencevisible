@@ -1,0 +1,106 @@
+<header class="page-head">
+  <div><h1>Campaigns</h1><p>Evaluate businesses. Find leads worth contacting.</p></div>
+  <button type="button" class="quiet" (click)="refresh()" [disabled]="loading() || busy()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button>
+</header>
+@if (error()) { <div class="error" role="alert">{{ error() }}</div> }
+@if (notice()) { <div class="notice" role="status">{{ notice() }}</div> }
+
+<section class="panel start-panel" aria-labelledby="start-title">
+  <div><h2 id="start-title">Start a campaign</h2><p class="hint">One business family. One city at a time.</p></div>
+  <form (ngSubmit)="start()" class="start-form">
+    <label>Region<select name="region" [ngModel]="regionId()" (ngModelChange)="selectRegion($event)" [disabled]="!!running() || busy() || loading()" required>
+      @if (!regions().length) { <option value="">No regions configured</option> }
+      @for (region of regions(); track region.id) { <option [value]="region.id">{{ region.name }}</option> }
+    </select></label>
+    <label>Business family<select name="family" [(ngModel)]="businessFamily" [disabled]="!!running() || busy() || loading()" required>
+      @if (!families().length) { <option value="">No business families configured</option> }
+      @for (family of families(); track family) { <option [value]="family">{{ family }}</option> }
+    </select></label>
+    <button class="primary" type="submit" [disabled]="!!running() || busy() || loading() || !regionId() || !businessFamily">{{ busy() ? 'Working…' : 'Start campaign' }} <span aria-hidden="true">↗</span></button>
+  </form>
+  @if (running(); as active) { <p class="start-note hint"><span class="live-dot"></span> A campaign is running. Finish or stop it before starting another. <button class="text-button" type="button" (click)="selectCampaign(active)">View campaign</button></p> }
+  @else if (!regions().length && !loading()) { <p class="start-note hint"><a routerLink="/operator/locations" class="link">Add a region, cities and business families</a> to start evaluating businesses.</p> }
+</section>
+
+<div class="campaign-layout">
+  <section class="campaign-list" aria-label="Campaign history">
+    <div class="list-heading"><h2>History</h2><span class="muted">{{ campaigns().length }}</span></div>
+    @for (campaign of campaigns(); track campaign.id) {
+      <button type="button" class="campaign-item" [class.selected]="selected()?.id === campaign.id" [attr.aria-pressed]="selected()?.id === campaign.id" (click)="selectCampaign(campaign)">
+        <span class="campaign-item-top"><span class="campaign-family">{{ campaign.businessFamily }}</span><span class="badge" [class.positive]="campaign.status === 'running'" [class.running]="campaign.status === 'running'">{{ campaign.status }}</span></span>
+        <span class="campaign-region">{{ campaign.regionName }}</span>
+        <span class="campaign-item-bottom"><span>{{ campaign.startedAt | date:'dd MMM, HH:mm' }}</span><span>{{ campaign.leadCount }} / {{ campaign.maxLeads }} leads</span></span>
+      </button>
+    } @empty { <p class="history-empty hint">{{ loading() ? 'Loading campaigns…' : 'Your campaigns will appear here.' }}</p> }
+  </section>
+
+  <div class="campaign-detail">
+    @if (selected(); as campaign) {
+      <section class="panel overview" aria-labelledby="campaign-title">
+        <div class="panel-head">
+          <div><div class="campaign-heading"><h2 id="campaign-title">{{ campaign.businessFamily }}</h2><span class="badge" [class.positive]="campaign.status === 'running'" [class.running]="campaign.status === 'running'">{{ campaign.status }}</span></div><p class="hint">{{ campaign.regionName }} · {{ campaign.startedAt | date:'dd MMM yyyy, HH:mm' }}</p></div>
+          @if (campaign.status === 'running') { <button class="danger quiet" type="button" [disabled]="busy()" (click)="stop(campaign)">Stop campaign</button> }
+        </div>
+        <div class="metrics">
+          <div><span>Leads found</span><strong>{{ campaign.leadCount }}<small> / {{ campaign.maxLeads }}</small></strong></div>
+          <div><span>Businesses evaluated</span><strong>{{ campaign.processedCount }}</strong></div>
+          <div><span>Elapsed</span><strong>{{ elapsed(campaign) }}</strong><small>Limit {{ campaign.maxDurationMinutes / 60 | number:'1.0-2' }}h</small></div>
+          <div><span>Estimated API cost</span><strong>${{ campaign.costUsd | number:'1.4-4' }}</strong><small>of ${{ campaign.maxApiCostUsd | number:'1.2-2' }} USD budget</small></div>
+        </div>
+        <div class="campaign-foot">
+          @if (campaign.status === 'running') { <p><span class="live-dot"></span>{{ campaign.currentCity ? 'Evaluating businesses in ' + campaign.currentCity : 'Starting evaluation…' }}</p> }
+          @else { <p>{{ completion(campaign) }}</p> }
+          @if (campaign.completionDetails) { <p class="hint">{{ campaign.completionDetails }}</p> }
+          <span class="mono muted">{{ campaign.id }}</span>
+        </div>
+        @if (campaign.queries.length) {
+          <details class="query-history"><summary>City queries <span class="muted">{{ campaign.queries.length }} / {{ campaign.cities.length }}</span></summary>
+            <div class="table-scroll"><table><thead><tr><th>City</th><th>Returned businesses</th><th>Processed businesses</th><th>Query</th></tr></thead><tbody>
+              @for (query of campaign.queries; track $index) { <tr><td>{{ query.city }}</td><td>{{ query.returnedCount }}</td><td>{{ query.processedCount }}</td><td>{{ query.completedAt ? 'Processed' : campaign.status === 'running' ? 'In progress' : 'Stopped' }}</td></tr> }
+            </tbody></table></div>
+          </details>
+        }
+      </section>
+
+      <section class="panel businesses-panel" aria-labelledby="businesses-title">
+        <div class="panel-head"><h2 id="businesses-title">Businesses processed <span class="muted count">{{ businesses().length }}</span></h2><label class="filter-label"><span class="sr-only">Filter businesses</span><select name="filter" [ngModel]="filter()" (ngModelChange)="filter.set($event)"><option value="all">All businesses</option><option value="leads">Leads</option><option value="not eligible">Not eligible</option></select></label></div>
+        @if (detailLoading() && !businesses().length) { <div class="empty"><p>Loading evaluated businesses…</p></div> }
+        @else if (!filteredBusinesses().length) { <div class="empty"><h3>{{ businesses().length ? 'No businesses in this view' : 'No businesses evaluated yet' }}</h3><p>{{ campaign.status === 'running' ? 'Each business appears here once its evaluation is complete.' : 'There are no evaluated businesses to display.' }}</p></div> }
+        @else {
+          <div class="table-scroll"><table class="business-table"><thead><tr><th>Business</th><th>Status</th><th>Reason</th><th><span class="sr-only">Details</span></th></tr></thead><tbody>
+            @for (business of filteredBusinesses(); track business.key) {
+              <tr [class.open-row]="expanded() === business.key">
+                <td><strong>{{ business.name }}</strong><span class="subline">{{ business.city }}</span></td>
+                <td><span class="badge" [class.positive]="business.evaluationStatus === 'new'">{{ business.status }}</span></td>
+                <td class="reason-cell">{{ readable(business.reasonForStatus.code) }}</td>
+                <td><button type="button" class="small quiet" [attr.aria-expanded]="expanded() === business.key" (click)="expanded.set(expanded() === business.key ? null : business.key)">{{ expanded() === business.key ? 'Close' : 'Review' }}</button></td>
+              </tr>
+              @if (expanded() === business.key) {
+                <tr class="detail-row"><td colspan="4">
+                  <div class="business-review">
+                    <div class="review-section"><h3>{{ business.evaluationStatus === 'new' ? 'Why this business is a lead' : 'Why this business is not eligible' }}</h3><p class="reason-details">{{ business.reasonForStatus.details }}</p>
+                      @if (business.reasonForStatus.issues?.length) { <ul class="issue-list">@for (issue of business.reasonForStatus.issues; track $index) { <li><strong>{{ readable(issue.code) }}</strong> — {{ issue.details }} @if (safeLink(issue.url); as url) { <a class="link" [href]="url" target="_blank" rel="noopener noreferrer">View page ↗</a> }</li> }</ul> }
+                    </div>
+                    <div class="contact-grid"><div><h3>Contact ways</h3>@if (business.email) { <a class="link" [href]="'mailto:' + business.email">{{ business.email }}</a> }@if (business.phone) { <a class="link" [href]="'tel:' + business.phone">{{ business.phone }}</a> }@if (!business.email && !business.phone) { <p class="muted">None</p> }</div><div><h3>Website</h3>@if (safeLink(business.website); as website) { <a class="link" [href]="website" target="_blank" rel="noopener noreferrer">{{ business.website }} ↗</a> } @else { <p class="muted">None found</p> }</div></div>
+                    <div class="review-section"><h3>Evidence</h3><div class="evidence-list">
+                      @for (item of business.evidence; track $index) {
+                        <article class="evidence-item"><div class="evidence-head"><strong>{{ readable(item.kind) }}</strong>@if (safeLink(item.url); as source) { <a class="link" [href]="source" target="_blank" rel="noopener noreferrer">Source ↗</a> }</div><ul>@for (fact of item.facts; track $index) { <li>{{ fact }}</li> }</ul><p class="hint">Observed {{ item.observedAt | date:'dd MMM yyyy, HH:mm' }}</p>@if (item.screenshot && screenshot(item.screenshot); as screenshotUrl) { <a class="screenshot-link" [href]="screenshotUrl" target="_blank" rel="noopener noreferrer"><img [src]="screenshotUrl" alt="Website evidence for {{ business.name }}" loading="lazy"><span class="link">Open screenshot ↗</span></a> }</article>
+                      } @empty { <p class="hint">No additional evidence was recorded.</p> }
+                    </div></div>
+                    <form class="business-edit" (ngSubmit)="saveBusiness(business)">
+                      @if (business.evaluationStatus === 'new') { <label>Lead status<select name="status" [ngModel]="statusDrafts[business.key] ?? business.status" (ngModelChange)="statusDrafts[business.key] = $event" [disabled]="saving() === business.key">@for (status of statuses; track status) { <option [value]="status">{{ status }}</option> }</select><span class="hint">Signed: contract signed; payment and delivery pending.</span></label> }
+                      <label class="comments-label">Comments<textarea name="comments" rows="3" maxlength="10000" [ngModel]="commentDrafts[business.key] ?? business.comments" (ngModelChange)="commentDrafts[business.key] = $event" [disabled]="saving() === business.key" placeholder="Your notes about this business"></textarea></label>
+                      <div class="actions"><button type="submit" class="primary small" [disabled]="!!saving() || !hasChanges(business)">{{ saving() === business.key ? 'Saving…' : 'Save changes' }}</button><span class="hint">Evaluated {{ business.evaluatedAt | date:'dd MMM yyyy, HH:mm' }}</span></div>
+                    </form>
+                  </div>
+                </td></tr>
+              }
+            }
+          </tbody></table></div>
+        }
+      </section>
+    } @else {
+      <section class="panel empty first-campaign"><span class="empty-symbol" aria-hidden="true">↗</span><h2>Your first campaign starts here</h2><p>Choose a region and a business family. Review each lead’s contact information and the evidence behind its eligibility.</p></section>
+    }
+  </div>
+</div>
