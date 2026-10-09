@@ -11,17 +11,7 @@ npm start
 
 Le site local est disponible sur `http://localhost:4201/`.
 
-## Espace opérateur
-
-L'icône de connexion dans l'en-tête ouvre `/login`. Après authentification,
-l'interface d’évaluation des entreprises est disponible sous `/operator`. Elle comprend trois pages : campagnes, lieux et configuration. En production,
-ses requêtes authentifiées ciblent `https://api.lagencevisible.com`; en local,
-`npm start` utilise le proxy HTTPS défini dans `proxy.conf.cjs`.
-
-Le backend doit utiliser `PUBLIC_APP_URL=https://lagencevisible.com` avec
-`AUTH_USERNAME` et `AUTH_PASSWORD`. `public/site-config.js` contient uniquement
-l'origine publique de l'API, jamais les identifiants. Les routes `/login` et
-`/operator/**` sont rendues côté client et ne sont pas pré-générées.
+Ce dépôt contient uniquement le site public. L’outil de prospection se contrôle via le serveur MCP du backend et ne possède plus d’interface web dans ce dépôt. Les anciennes adresses de connexion et de gestion affichent la page publique « introuvable ».
 
 ## Configuration avant publication
 
@@ -32,10 +22,6 @@ Avant publication, vérifier que les coordonnées légales correspondent toujour
 ### Contact
 
 La page de contact propose un lien email direct qui ouvre la messagerie du visiteur. Aucun formulaire, brouillon ou envoi par le backend n’est utilisé. L’adresse se configure dans `src/app/core/site.config.ts`.
-
-### Campagnes
-
-Chaque campagne fixe une région et une famille d’entreprises. Les villes sont parcourues dans l’ordre défini sur la page Lieux. Une seule campagne peut être active ; les trois limites configurables sont le nombre de leads, la durée et le budget API (5 leads, 3 heures et 2 USD par défaut). La page Campagnes affiche le coût API estimé et le budget fixé au lancement, les preuves d’éligibilité, les moyens de contact, les commentaires et les six statuts de suivi des leads. Les appels API et l’environnement sont visibles sur Configuration, sans afficher les secrets.
 
 ## Blog Markdown
 
@@ -59,7 +45,7 @@ Dans les paramètres GitHub du dépôt :
 1. choisir **Settings → Pages → Source → GitHub Actions** ;
 2. vérifier que les Actions sont autorisées dans **Settings → Actions → General** ;
 3. si un domaine personnalisé est utilisé, le configurer dans **Settings → Pages**, puis mettre à jour les DNS chez le registrar (avec ce workflow GitHub Actions, un fichier `CNAME` n’est pas requis) ;
-4. tester le lien email de contact et la connexion opérateur depuis l’URL Pages finale ;
+4. tester la navigation publique et le lien email de contact depuis l’URL Pages finale ;
 5. vérifier les mentions légales, la politique de confidentialité, les coordonnées et tous les liens avant publication ;
 6. après publication, ajouter le domaine à Google Search Console et envoyer l’URL `/sitemap.xml`.
 

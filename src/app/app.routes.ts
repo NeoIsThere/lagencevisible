@@ -2,17 +2,6 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: 'login',
-    loadComponent: () => import('./operator/login/login.component').then((m) => m.LoginComponent),
-    data: { robots: 'noindex, nofollow' },
-  },
-  {
-    path: 'operator',
-    loadComponent: () => import('./operator/operator-shell.component').then((m) => m.OperatorShellComponent),
-    loadChildren: () => import('./operator/operator.routes').then((m) => m.operatorRoutes),
-    data: { robots: 'noindex, nofollow' },
-  },
-  {
     path: '',
     loadComponent: () => import('./pages/home/home.page').then((m) => m.HomePage),
     data: {

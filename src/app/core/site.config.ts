@@ -18,17 +18,3 @@ export const SITE_CONFIG = {
     hostSupport: 'https://support.github.com/',
   },
 } as const;
-
-declare global {
-  interface Window {
-    __SITE_CONFIG__?: { OPERATOR_API_ORIGIN?: string };
-  }
-}
-
-export function operatorApiUrl(path: string): string {
-  if (/^https?:\/\//i.test(path)) return path;
-  if (typeof window === 'undefined') return path;
-  const local = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
-  const configured = window.__SITE_CONFIG__?.OPERATOR_API_ORIGIN?.trim().replace(/\/$/, '') || 'https://api.lagencevisible.com';
-  return `${local ? '' : configured}${path.startsWith('/') ? path : `/${path}`}`;
-}

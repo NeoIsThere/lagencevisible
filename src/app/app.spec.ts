@@ -24,6 +24,7 @@ describe('App', () => {
     expect(text).toContain('Mentions légales');
     expect(text).toContain('Politique de confidentialité');
     expect(text).not.toContain('Réalisations');
+    expect((fixture.nativeElement as HTMLElement).querySelector('a[href="/login"], a[href^="/operator"]')).toBeNull();
   });
 
   it('switches the shared interface to English', () => {
