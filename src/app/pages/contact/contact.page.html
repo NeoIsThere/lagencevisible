@@ -2,17 +2,14 @@
   <div class="container contact-layout">
     <aside class="contact-aside">
       <nav class="breadcrumb" [attr.aria-label]="i18n.t('Fil d’Ariane', 'Breadcrumb')"><a routerLink="/">{{ i18n.t('Accueil', 'Home') }}</a><span>/</span><span>Contact</span></nav>
-      <p class="eyebrow">{{ i18n.t('Analyse de site', 'Website analysis') }}</p>
       <h1 id="contact-title">{{ i18n.t('Parlons de votre', 'Let’s talk about your') }} <span class="accent">{{ i18n.t('site web.', 'website.') }}</span></h1>
-      <p class="lead">{{ i18n.t('Présentez-nous votre site actuel ou votre besoin de création. Nous vous répondrons avec des pistes claires.', 'Tell us about your current website or the one you would like to create. We will reply with clear, practical suggestions.') }}</p>
-      <div class="contact-detail"><span aria-hidden="true">&#64;</span><a [href]="'mailto:' + site.email">{{ site.email }}</a></div>
+      <p class="lead">{{ i18n.t('Une question ou un projet ? Écrivez-nous.', 'Have a question or a project? Email us.') }}</p>
     </aside>
     <div class="contact-card">
       <h2>{{ i18n.t('Écrivez-nous.', 'Email us.') }}</h2>
-      <p>{{ i18n.t('Parlez-nous de votre entreprise, de votre site actuel si vous en avez un, et de ce que vous souhaitez améliorer.', 'Tell us about your business, your current website if you have one, and what you would like to improve.') }}</p>
-      <a class="button" [href]="'mailto:' + site.email">{{ i18n.t('Nous contacter par email', 'Contact us by email') }} <span aria-hidden="true">↗</span></a>
-      <p class="contact-note">{{ i18n.t('Ce lien ouvre votre messagerie. Vous pouvez aussi copier notre adresse :', 'This link opens your email application. You can also copy our address:') }} <a class="text-link" [href]="'mailto:' + site.email">{{ site.email }}</a>.</p>
-      <p class="contact-note">{{ i18n.t('Nous utilisons les informations de votre message pour répondre à votre demande. Consultez notre', 'We use the information in your message to respond to your enquiry. Read our') }} <a class="text-link" routerLink="/politique-confidentialite">{{ i18n.t('politique de confidentialité', 'privacy policy') }}</a>.</p>
+      <a class="button" [href]="'mailto:' + site.email">{{ i18n.t('Envoyer un email', 'Send an email') }} <span aria-hidden="true">↗</span></a>
+      <p class="contact-note">{{ i18n.t('Ou écrivez à', 'Or write to') }} <a class="text-link" [href]="'mailto:' + site.email">{{ site.email }}</a></p>
+      <a class="text-link contact-privacy" routerLink="/politique-confidentialite">{{ i18n.t('Confidentialité', 'Privacy') }}</a>
     </div>
   </div>
 </section>
