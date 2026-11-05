@@ -39,6 +39,90 @@ export interface LocalizedBlogArticle {
 
 export const BLOG_ARTICLES: readonly BlogArticle[] = [
   {
+    slug: 'mesurer-demandes-site-web',
+    title: {
+      fr: 'Comment savoir si votre site apporte des demandes utiles ?',
+      en: 'How can you tell whether your website brings useful enquiries?',
+    },
+    description: {
+      fr: 'Distinguer visibilité, visites et vrais contacts pour mesurer ce que votre site apporte à l’entreprise.',
+      en: 'Separate search visibility, visits and real enquiries to understand what your website contributes.',
+    },
+    category: 'conversion',
+    date: '2026-10-30',
+    readingMinutes: 4,
+  },
+  {
+    slug: 'faq-site-entreprise',
+    title: {
+      fr: 'Une FAQ utile pour votre site d’entreprise',
+      en: 'How to write a useful FAQ for your business website',
+    },
+    description: {
+      fr: 'Choisir les vraies questions des clients, y répondre clairement et garder les informations à jour.',
+      en: 'Choose real customer questions, answer them clearly and keep the information current.',
+    },
+    category: 'website',
+    date: '2026-10-20',
+    readingMinutes: 3,
+  },
+  {
+    slug: 'photos-site-entreprise',
+    title: {
+      fr: 'Quelles photos choisir pour votre site d’entreprise ?',
+      en: 'Which photos should you choose for your business website?',
+    },
+    description: {
+      fr: 'Des images authentiques, autorisées et utiles pour expliquer votre activité sans alourdir la page.',
+      en: 'Choose authentic, approved images that explain your work without weighing down the page.',
+    },
+    category: 'website',
+    date: '2026-10-08',
+    readingMinutes: 4,
+  },
+  {
+    slug: 'refonte-site-sans-perdre-reperes',
+    title: {
+      fr: 'Refondre son site sans perdre les repères utiles',
+      en: 'Redesign your website without losing what works',
+    },
+    description: {
+      fr: 'Faire l’inventaire des contenus, préparer les nouvelles pages et traiter correctement les anciennes URL.',
+      en: 'Review existing content, prepare new pages and handle old URLs carefully.',
+    },
+    category: 'website',
+    date: '2026-09-25',
+    readingMinutes: 4,
+  },
+  {
+    slug: 'page-service-claire',
+    title: {
+      fr: 'Comment créer une page de service claire ?',
+      en: 'How do you write a clear service page?',
+    },
+    description: {
+      fr: 'Expliquer une prestation, montrer ce qu’elle comprend et rendre la prise de contact évidente.',
+      en: 'Explain one service, show what it includes and make the next step obvious.',
+    },
+    category: 'conversion',
+    date: '2026-09-11',
+    readingMinutes: 3,
+  },
+  {
+    slug: 'site-web-visibilite-locale',
+    title: {
+      fr: 'Comment présenter votre activité locale sur votre site ?',
+      en: 'How should your website present a local business?',
+    },
+    description: {
+      fr: 'Zone d’intervention, services et coordonnées : les informations qui aident les clients proches à vous comprendre.',
+      en: 'Service area, services and contact details that help nearby customers understand your business.',
+    },
+    category: 'online-presence',
+    date: '2026-07-17',
+    readingMinutes: 4,
+  },
+  {
     slug: 'entreprise-invisible-ere-ia',
     title: {
       fr: 'Pourquoi une entreprise sans site devient invisible à l’ère de l’IA',

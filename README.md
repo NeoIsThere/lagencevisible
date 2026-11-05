@@ -25,7 +25,7 @@ La page de contact propose un lien email direct qui ouvre la messagerie du visit
 
 ## Blog Markdown
 
-Les huit articles français se trouvent dans `public/content/blog` et leurs versions anglaises dans `public/content/blog/en`. Leurs métadonnées bilingues sont centralisées dans `src/app/core/blog.data.ts`. Pour ajouter un article, créer les deux fichiers `{slug}.md` et ajouter sa fiche aux métadonnées.
+Les quatorze articles français se trouvent dans `public/content/blog` et leurs versions anglaises dans `public/content/blog/en`. Leurs métadonnées bilingues sont centralisées dans `src/app/core/blog.data.ts`. Pour ajouter un article, créer les deux fichiers `{slug}.md` et ajouter sa fiche aux métadonnées et au sitemap.
 
 ## Vérifications
 
@@ -34,7 +34,7 @@ npm test -- --watch=false
 npm run build
 ```
 
-Le build de production est écrit dans `dist/presence-web/browser`. Angular génère statiquement les 16 routes déclarées, dont les huit articles. Chaque page dispose ainsi de son propre HTML et d’une URL sans `#`.
+Le build de production est écrit dans `dist/presence-web/browser`. Angular génère statiquement les 22 routes déclarées, dont les quatorze articles. Chaque page dispose ainsi de son propre HTML et d’une URL sans `#`.
 
 ## Déploiement GitHub Pages
 
