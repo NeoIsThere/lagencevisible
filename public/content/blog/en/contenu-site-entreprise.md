@@ -32,9 +32,9 @@ Keep the contact details consistent across the contact page, local listing and p
 
 ## Simple contact options
 
-Keep the initial form short. Ask for a name, a way to reply and only the information needed to prepare for the first conversation. Further details can be collected later.
+Show an email address that is easy to find and a link that opens the visitor’s email application. Briefly explain what they can include to prepare for an initial conversation.
 
-Also display an email address and, where relevant, a telephone number. Explain what happens after the form is submitted to reduce uncertainty.
+If phone contact suits your business, show the number and the hours when people can reach you.
 
 ## An FAQ based on real questions
 

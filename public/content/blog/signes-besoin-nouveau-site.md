@@ -16,7 +16,7 @@ Une refonte ne consiste pas seulement à changer les couleurs. Elle doit réorga
 
 Si le visiteur doit zoomer, déplacer la page horizontalement ou viser un bouton trop petit, le site lui demande un effort inutile. Les informations essentielles doivent être immédiatement lisibles sur un écran étroit.
 
-Testez votre site sur un téléphone réel : peut-on comprendre l’activité en quelques secondes ? Le numéro, le formulaire et les itinéraires sont-ils faciles à utiliser ?
+Testez votre site sur un téléphone réel : peut-on comprendre l’activité en quelques secondes ? Le lien email, le numéro et les itinéraires sont-ils faciles à utiliser ?
 
 ## Les informations sont incorrectes
 
@@ -32,7 +32,7 @@ Des pages de services dédiées permettent d’expliquer chaque sujet avec les b
 
 ## Le contact demande trop d’efforts
 
-Un formulaire très long, un bouton caché ou une adresse email difficile à trouver font perdre des demandes. Le parcours idéal reste simple : comprendre, être rassuré, puis contacter.
+Un bouton caché, un lien email qui ne fonctionne pas ou une adresse difficile à trouver font perdre des demandes. Le parcours idéal reste simple : comprendre, être rassuré, puis contacter.
 
 > Un nouveau site devient nécessaire lorsque l’ancien crée plus de friction qu’il n’apporte de confiance.
 

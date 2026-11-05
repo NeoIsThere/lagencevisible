@@ -146,7 +146,7 @@ export class BlogArticlePage implements OnDestroy {
           description: article.description,
           inLanguage: language,
           datePublished: article.date,
-          dateModified: article.date,
+          dateModified: article.modifiedDate,
           author: { '@type': 'Organization', name: SITE_CONFIG.brand },
           publisher: { '@type': 'Organization', name: SITE_CONFIG.brand },
           mainEntityOfPage: articleUrl,

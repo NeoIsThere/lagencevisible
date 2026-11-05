@@ -20,7 +20,7 @@ const FAQ_FR: readonly (readonly [string, string])[] = [
   ['Le site m’appartiendra-t-il ?', 'Oui. Les conditions de propriété, d’accès et de transfert sont clairement définies avant de commencer.'],
   ['Pouvez-vous modifier un site existant ?', 'Oui. Nous pouvons analyser sa structure, corriger ses contenus et améliorer son affichage ou son utilisation.'],
   ['Travaillez-vous à distance ?', 'Oui. Nous pouvons organiser et réaliser votre projet entièrement à distance.'],
-  ['Comment vous contacter ?', 'Vous pouvez nous présenter votre site ou nous envoyer directement un message depuis le formulaire de contact.'],
+  ['Comment vous contacter ?', 'Utilisez le lien email sur la page contact pour nous présenter votre projet.'],
 ];
 
 const FAQ_EN: readonly (readonly [string, string])[] = [
@@ -37,7 +37,7 @@ const FAQ_EN: readonly (readonly [string, string])[] = [
   ['Will I own the website?', 'Yes. Ownership, access and transfer terms are clearly defined before we begin.'],
   ['Can you modify an existing website?', 'Yes. We can analyse its structure, correct its content and improve its appearance or usability.'],
   ['Do you work remotely?', 'Yes. We can organise and deliver your project entirely remotely.'],
-  ['How can I contact you?', 'You can tell us about your website or send us a message directly through the contact form.'],
+  ['How can I contact you?', 'Use the email link on the contact page to tell us about your project.'],
 ];
 
 @Component({

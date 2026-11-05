@@ -18,11 +18,11 @@ A button near the top of the page helps people who are ready to act. Others need
 
 On mobile, make sure the button remains easy to tap and that its text is not cut off.
 
-## Keep forms short
+## Make the first contact easy
 
-Every additional field creates work and prompts questions about how the data will be used. For an initial enquiry, a name, business name, email address and message are often enough. A telephone number and current website can remain optional.
+Someone ready to write to you should not have to search for your address. Place a visible email link near the offer and on the contact page. Its label should make clear that it opens the visitor’s email application.
 
-The form should identify errors clearly, retain information that has already been entered and confirm a successful submission. A short privacy message reassures visitors about how their information will be used.
+Show the address in plain text too, so it can be copied. A brief note about what is useful to include in a first message can help people get started without asking them to answer a long list of questions.
 
 ## Address common concerns
 
@@ -32,8 +32,8 @@ Useful trust signals might also include the location, verifiable qualifications,
 
 ## Refine the mobile experience
 
-An enquiry may begin away from a computer. The website should load quickly, make contact details easy to use and display the appropriate keyboard for each field. Test the entire submission process on a phone, not just the form’s appearance.
+An enquiry may begin away from a computer. The website should load quickly and make contact details easy to use. Test the email link on a phone and check that the address remains easy to copy.
 
 > Conversion is not a trick. It happens when nothing gets in the way between a question and getting in touch.
 
-If a suitable tool is configured, you can then measure the relevant steps in a privacy-conscious way: pages viewed, clicks through to the contact page and forms successfully submitted. These observations can help improve the wording without promising a conversion rate or a particular number of customers.
+If a suitable tool is configured, you can then measure relevant steps in a privacy-conscious way: pages viewed and clicks through to the contact page. Compare those observations with enquiries actually received without promising a conversion rate or a particular number of customers.

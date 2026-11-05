@@ -29,7 +29,7 @@ On a website, you control how the information is organised:
 - a page for each important service;
 - answers to frequently asked questions;
 - an introduction to the team;
-- a form suited to the enquiry.
+- a contact option that is visible and easy to use.
 
 Every piece of information has a stable URL. It can be shared directly and found through a specific search.
 

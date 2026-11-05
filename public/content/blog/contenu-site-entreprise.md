@@ -32,9 +32,9 @@ Maintenez les mêmes coordonnées sur la page contact, la fiche locale et les pr
 
 ## Un contact simple
 
-Le formulaire initial doit rester court. Demandez le nom, un moyen de réponse et les informations indispensables pour préparer l’échange. Les détails supplémentaires pourront être recueillis ensuite.
+Affichez une adresse email facile à trouver et un lien qui ouvre la messagerie du visiteur. Expliquez brièvement ce qu’il peut vous écrire pour préparer un premier échange.
 
-Affichez aussi une adresse email et, lorsque cela est pertinent, un téléphone. Précisez ce qu’il se passe après l’envoi afin de réduire l’incertitude.
+Si le téléphone est un moyen de contact adapté à votre activité, indiquez également le numéro et les horaires auxquels vous êtes joignable.
 
 ## Une FAQ fondée sur les vraies questions
 

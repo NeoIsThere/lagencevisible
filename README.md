@@ -21,7 +21,7 @@ Avant publication, vérifier que les coordonnées légales correspondent toujour
 
 ### Contact
 
-La page de contact propose un lien email direct qui ouvre la messagerie du visiteur. Aucun formulaire, brouillon ou envoi par le backend n’est utilisé. L’adresse se configure dans `src/app/core/site.config.ts`.
+La page de contact propose un lien email direct qui ouvre la messagerie du visiteur. L’adresse se configure dans `src/app/core/site.config.ts`.
 
 ## Blog Markdown
 

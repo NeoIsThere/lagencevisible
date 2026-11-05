@@ -20,13 +20,13 @@ Buttons need a comfortably sized touch target and a clear label. ‘Request a we
 
 ## Contact should be immediate
 
-Mobile visitors should be able to tap to call, send an email or open directions without copying details manually. An effective form asks only for the information needed for an initial response.
+Mobile visitors should be able to tap to call, send an email or open directions without copying details manually. A clearly labelled email link lets them open their email application directly.
 
-Consider the keyboard displayed for each field as well: an email field should open the appropriate keyboard, as should a telephone number field.
+Check that contact details remain readable and that links open the appropriate applications.
 
 ## A poor mobile experience damages trust
 
-Visitors do not always see a layout fault as an isolated problem. If a button extends beyond the screen or a form cannot be submitted, they may simply decide that the business is difficult to contact.
+Visitors do not always see a layout fault as an isolated problem. If a button extends beyond the screen or the email link does not work, they may simply decide that the business is difficult to contact.
 
 > On mobile, every point of friction feels larger.
 
@@ -34,4 +34,4 @@ Visitors do not always see a layout fault as an isolated problem. If a button ex
 
 Shrinking a large-screen design at the end often leads to content being hidden or squeezed. Starting with small screens forces you to prioritise what truly matters.
 
-The result benefits every screen size: a clearer message, simpler navigation and more visible actions. At a minimum, test common screen widths, keyboard navigation, phone orientation and forms on real devices.
+The result benefits every screen size: a clearer message, simpler navigation and more visible actions. At a minimum, test common screen widths, keyboard navigation, phone orientation and contact links on real devices.

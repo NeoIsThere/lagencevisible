@@ -29,7 +29,7 @@ Sur un site, vous organisez la lecture :
 - une page par service important ;
 - des réponses aux questions fréquentes ;
 - une présentation de l’équipe ;
-- un formulaire adapté au besoin.
+- un moyen de contact visible et simple à utiliser.
 
 Chaque information possède une adresse stable. Elle peut être partagée directement et trouvée depuis une recherche précise.
 

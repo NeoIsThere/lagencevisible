@@ -18,11 +18,11 @@ Un bouton visible dès le début convient aux personnes déjà décidées. D’a
 
 Sur mobile, vérifiez que le bouton reste facile à toucher et que son texte ne soit pas coupé.
 
-## Garder les formulaires courts
+## Faciliter le premier contact
 
-Chaque champ supplémentaire demande un effort et soulève une question sur l’usage de la donnée. Pour un premier contact, le nom, l’entreprise, l’email et un message suffisent souvent. Le téléphone et le site actuel peuvent rester facultatifs.
+Une personne prête à vous écrire ne devrait pas devoir chercher votre adresse. Placez un lien email visible près de l’offre et sur la page contact. Son libellé doit indiquer qu’il ouvre la messagerie du visiteur.
 
-Le formulaire doit indiquer clairement les erreurs, conserver les données déjà saisies et confirmer l’envoi. Un message de confidentialité bref rassure sur l’usage des informations.
+Affichez aussi l’adresse en clair pour qu’elle puisse être copiée. Une courte indication sur les informations utiles au premier échange peut aider à démarrer, sans imposer une longue liste de questions.
 
 ## Répondre aux hésitations
 
@@ -32,8 +32,8 @@ La réassurance peut également préciser la localisation, les qualifications v�
 
 ## Soigner l’expérience mobile
 
-Une demande peut naître loin d’un ordinateur. Le site doit charger rapidement, rendre les coordonnées utilisables et adapter le clavier aux champs. Testez l’envoi complet depuis un téléphone, pas seulement l’apparence du formulaire.
+Une demande peut naître loin d’un ordinateur. Le site doit charger rapidement et rendre les coordonnées utilisables. Testez le lien email depuis un téléphone et vérifiez que l’adresse reste facile à copier.
 
 > La conversion n’est pas une astuce. C’est l’absence de friction entre une question et une prise de contact.
 
-Mesurez ensuite les étapes de manière respectueuse, si un outil adapté est configuré : pages consultées, clics vers le contact et formulaires réellement envoyés. Ces observations permettent d’améliorer les messages sans promettre un taux de conversion ou un nombre de clients.
+Mesurez ensuite les étapes de manière respectueuse, si un outil adapté est configuré : pages consultées et clics vers le contact. Comparez ces observations aux demandes réellement reçues, sans promettre un taux de conversion ou un nombre de clients.

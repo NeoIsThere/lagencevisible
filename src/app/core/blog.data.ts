@@ -22,6 +22,7 @@ export interface BlogArticle {
   description: LocalizedText;
   category: BlogCategoryKey;
   date: string;
+  modifiedDate?: string;
   readingMinutes: number;
 }
 
@@ -32,6 +33,7 @@ export interface LocalizedBlogArticle {
   category: BlogCategoryKey;
   categoryLabel: string;
   date: string;
+  modifiedDate: string;
   displayDate: string;
   author: string;
   readingLabel: string;
@@ -148,6 +150,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     },
     category: 'online-presence',
     date: '2026-06-05',
+    modifiedDate: '2026-11-05',
     readingMinutes: 6,
   },
   {
@@ -176,6 +179,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     },
     category: 'website',
     date: '2026-05-08',
+    modifiedDate: '2026-11-05',
     readingMinutes: 5,
   },
   {
@@ -204,6 +208,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     },
     category: 'website',
     date: '2026-04-10',
+    modifiedDate: '2026-11-05',
     readingMinutes: 5,
   },
   {
@@ -218,6 +223,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     },
     category: 'website',
     date: '2026-03-27',
+    modifiedDate: '2026-11-05',
     readingMinutes: 6,
   },
   {
@@ -227,11 +233,12 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
       en: 'How can you turn website visitors into enquiries?',
     },
     description: {
-      fr: 'Un message clair, des preuves utiles et un formulaire court pour faciliter le passage à l’action.',
-      en: 'A clear message, useful evidence, and a short form that make it easier to take action.',
+      fr: 'Un message clair, des preuves utiles et un lien email visible pour faciliter le passage à l’action.',
+      en: 'A clear message, useful evidence, and a visible email link that make it easier to get in touch.',
     },
     category: 'conversion',
     date: '2026-03-13',
+    modifiedDate: '2026-11-05',
     readingMinutes: 6,
   },
 ];
@@ -255,6 +262,7 @@ export function localizeBlogArticle(
     category: article.category,
     categoryLabel: BLOG_CATEGORY_LABELS[article.category][language],
     date: article.date,
+    modifiedDate: article.modifiedDate ?? article.date,
     displayDate,
     author:
       language === 'fr' ? 'l’équipe de L’agence visible' : 'the team at L’agence visible',

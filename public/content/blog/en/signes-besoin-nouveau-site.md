@@ -16,7 +16,7 @@ A redesign involves more than changing the colours. It should reorganise the mai
 
 If visitors have to zoom in, scroll horizontally or aim for a button that is too small, the website is demanding unnecessary effort. Essential information should be immediately readable on a narrow screen.
 
-Test your website on a real phone: can someone understand the business within a few seconds? Are the telephone number, form and directions easy to use?
+Test your website on a real phone: can someone understand the business within a few seconds? Are the email link, telephone number and directions easy to use?
 
 ## The information is incorrect
 
@@ -32,7 +32,7 @@ Dedicated service pages allow each topic to be explained in clear language, with
 
 ## Getting in touch takes too much effort
 
-An overly long form, a buried button or an email address that is difficult to find can all lead to lost enquiries. The ideal journey remains simple: understand, feel reassured and then make contact.
+A buried button, a broken email link or an address that is difficult to find can all lead to lost enquiries. The ideal journey remains simple: understand, feel reassured and then make contact.
 
 > A new website becomes necessary when the old one creates more friction than trust.
 

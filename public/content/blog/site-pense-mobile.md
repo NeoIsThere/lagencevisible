@@ -20,13 +20,13 @@ Les boutons ont besoin d’une zone tactile confortable et d’un libellé préc
 
 ## Le contact doit être immédiat
 
-Un visiteur mobile doit pouvoir appeler, écrire ou ouvrir un itinéraire sans recopier une information. Un formulaire efficace demande seulement les données nécessaires à la première réponse.
+Un visiteur mobile doit pouvoir appeler, écrire ou ouvrir un itinéraire sans recopier une information. Un lien email clairement identifié lui permet d’ouvrir sa messagerie directement.
 
-Pensez également au clavier affiché pour chaque champ : un champ email doit ouvrir le clavier adapté, tout comme un numéro de téléphone.
+Vérifiez que les coordonnées restent lisibles et que les liens fonctionnent dans les applications correspondantes.
 
 ## Un mauvais mobile abîme la confiance
 
-Le visiteur ne distingue pas toujours un problème de mise en page d’un manque de sérieux général. Si un bouton sort de l’écran ou si un formulaire ne s’envoie pas, il peut simplement conclure que l’entreprise est difficile à joindre.
+Le visiteur ne distingue pas toujours un problème de mise en page d’un manque de sérieux général. Si un bouton sort de l’écran ou si le lien email ne fonctionne pas, il peut simplement conclure que l’entreprise est difficile à joindre.
 
 > Sur mobile, chaque friction prend plus de place.
 
@@ -34,5 +34,5 @@ Le visiteur ne distingue pas toujours un problème de mise en page d’un manque
 
 Adapter une grande maquette à la fin du projet conduit souvent à cacher ou comprimer les contenus. Une approche pensée dès le départ pour les petits écrans oblige à hiérarchiser ce qui compte vraiment.
 
-Le résultat bénéficie ensuite à tous les formats : message plus clair, navigation plus simple et actions plus visibles. Testez au minimum les largeurs courantes, la navigation au clavier, l’orientation du téléphone et les formulaires sur de vrais appareils.
+Le résultat bénéficie ensuite à tous les formats : message plus clair, navigation plus simple et actions plus visibles. Testez au minimum les largeurs courantes, la navigation au clavier, l’orientation du téléphone et les liens de contact sur de vrais appareils.
 
