@@ -1,11 +1,10 @@
 import { Component, effect, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/seo.service';
 import { SITE_CONFIG } from '../../core/site.config';
 import { FinalCtaComponent } from '../../shared/final-cta/final-cta.component';
 import { LanguageService } from '../../core/language.service';
 
-@Component({ selector: 'app-services-page', imports: [RouterLink, FinalCtaComponent], templateUrl: './services.page.html' })
+@Component({ selector: 'app-services-page', imports: [FinalCtaComponent], templateUrl: './services.page.html' })
 export class ServicesPage {
   private readonly seo = inject(SeoService);
   readonly i18n = inject(LanguageService);

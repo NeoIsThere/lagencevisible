@@ -34,7 +34,7 @@ npm test -- --watch=false
 npm run build
 ```
 
-Le build de production est écrit dans `dist/presence-web/browser`. Angular génère statiquement les 22 routes déclarées, dont les quatorze articles. Chaque page dispose ainsi de son propre HTML et d’une URL sans `#`.
+Le build de production est écrit dans `dist/presence-web/browser`. Angular génère statiquement les 21 routes déclarées, dont les quatorze articles. Chaque page dispose ainsi de son propre HTML et d’une URL sans `#`.
 
 ## Déploiement GitHub Pages
 

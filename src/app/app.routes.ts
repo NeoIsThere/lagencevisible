@@ -24,17 +24,6 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'visibilite-google-ia',
-    loadComponent: () => import('./pages/visibility/visibility.page').then((m) => m.VisibilityPage),
-    data: {
-      title: { fr: 'Analyse et amélioration de site web | L’agence visible', en: 'Website analysis and improvement | L’agence visible' },
-      description: {
-        fr: 'Une analyse claire du contenu, de la structure, de l’affichage mobile et des points à améliorer sur votre site.',
-        en: 'A clear review of your website’s content, structure, mobile experience and opportunities for improvement.',
-      },
-    },
-  },
-  {
     path: 'a-propos',
     loadComponent: () => import('./pages/about/about.page').then((m) => m.AboutPage),
     data: {
